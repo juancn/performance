@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9920957e-542a-4650-b41e-eb62f2a5293a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/performance/runtime/Helper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/performance/App.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/performance.iml" afterPath="$PROJECT_DIR$/performance.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/performance.ipr" afterPath="$PROJECT_DIR$/performance.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/performance.iws" afterPath="$PROJECT_DIR$/performance.iws" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/performance/parser/PrattParser.java" afterPath="$PROJECT_DIR$/src/main/java/performance/parser/PrattParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java" afterPath="$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java" />
     </list>
     <ignored path="performance.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -74,10 +70,19 @@
       <file leaf-file-name="ClassTransformer.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="0" selection-start="2256" selection-end="2256" vertical-scroll-proportion="0.8455882">
+            <state line="52" column="41" selection-start="2215" selection-end="2215" vertical-scroll-proportion="0.8014706">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="String.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/jdk1.6-src/j2se/src/share/classes/java/lang/String.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2035" column="18" selection-start="78010" selection-end="78010" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -136,15 +141,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClassWriter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Downloads/asm-3.3.1/src/org/objectweb/asm/ClassWriter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="13" selection-start="2119" selection-end="2119" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ClassAdapter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Downloads/asm-3.3.1/src/org/objectweb/asm/ClassAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -157,7 +153,7 @@
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="8" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
+            <state line="51" column="0" selection-start="2125" selection-end="2125" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -184,8 +180,8 @@
         <option value="$PROJECT_DIR$/src/main/java/performance/parser/Lexer.java" />
         <option value="$PROJECT_DIR$/src/main/java/performance/parser/TokenType.java" />
         <option value="$PROJECT_DIR$/src/main/java/performance/parser/PrattParser.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/performance/runtime/Helper.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java" />
       </list>
     </option>
@@ -635,34 +631,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/performance/parser/Lexer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="10" selection-start="653" selection-end="653" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1298401941000" expanded="true" signature="36:105" placeholder="..." />
-            <element signature="imports" expanded="true" />
-            <marker date="1298401941000" expanded="true" signature="108:153" placeholder="/StatementWithEmptyBody/" />
-            <marker date="1298401941000" expanded="true" signature="486:641" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="688:1349" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="1411:2393" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="2438:5867" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="5901:6057" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="6095:6297" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="6340:6409" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="6453:6523" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="6553:7848" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="8048:8115" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="8147:8253" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="8275:8625" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="8649:8904" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="9022:9047" placeholder="&lt;~&gt;" />
-            <marker date="1298401941000" expanded="true" signature="9218:11526" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="11641:12069" placeholder="{...}" />
-            <marker date="1298401941000" expanded="true" signature="11689:12063" placeholder="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/performance/parser/PrattParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="79" column="33" selection-start="2150" selection-end="2160" vertical-scroll-proportion="0.0">
@@ -728,13 +696,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="8" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Downloads/asm-3.3.1/src/org/objectweb/asm/ClassAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="107" column="25" selection-start="3704" selection-end="3704" vertical-scroll-proportion="0.0">
@@ -763,9 +724,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="0" selection-start="2125" selection-end="2125" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/jdk1.6-src/j2se/src/share/classes/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2035" column="18" selection-start="78010" selection-end="78010" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/performance/transformer/ClassTransformer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="2256" selection-end="2256" vertical-scroll-proportion="0.8455882">
+        <state line="52" column="41" selection-start="2215" selection-end="2215" vertical-scroll-proportion="0.8014706">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

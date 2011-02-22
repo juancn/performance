@@ -9,6 +9,7 @@ import org.objectweb.asm.commons.AdviceAdapter;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
 @SuppressWarnings({"UnusedDeclaration"})
@@ -21,6 +22,9 @@ public class ClassTransformer
                             final ProtectionDomain protectionDomain,
                             final byte[] bytecode) throws IllegalClassFormatException
     {
+        if(className.startsWith("performance")) {
+            return bytecode;
+        }
         final ClassReader classReader = new ClassReader(bytecode);
         final ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         final ClassVisitor visitor = new ClassAdapter(classWriter) {
@@ -46,9 +50,13 @@ public class ClassTransformer
 
         protected void onMethodEnter()
         {
+            visitLdcInsn(className.replace('/','.'));
             visitLdcInsn(methodName);
-            visitLdcInsn(className);
             visitMethodInsn(INVOKESTATIC, "performance/runtime/Helper", "methodEnter", "(Ljava/lang/String;Ljava/lang/String;)V");
         }
+    }
+
+    public static void premain(String agentArgs, Instrumentation inst) {
+        inst.addTransformer(new ClassTransformer());
     }
 }
