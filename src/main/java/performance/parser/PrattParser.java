@@ -19,7 +19,6 @@ public final class PrattParser {
     public Expr parseExpression(int stickiness) throws LexicalException {
         Token token = consume();
         final PrefixParser prefix = grammar.getPrefixParser(token);
-        //notNull(prefix);
         Expr left = prefix.parse(this, token);
 
         while (stickiness < grammar.getStickiness(current())) {
@@ -181,7 +180,7 @@ public final class PrattParser {
         g.constant(TokenType.FLOAT_LITERAL);
         g.constant(TokenType.STRING);
 
-        String text = "2+-5*3+1";
+        String text = "2+-5*3-1";
         Lexer l = new Lexer(text, 0 , text.length());
         PrattParser prattParser = new PrattParser(g, l);
         Expr expr = prattParser.parseExpression(0);
