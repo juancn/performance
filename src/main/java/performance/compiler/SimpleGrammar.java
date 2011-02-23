@@ -31,8 +31,8 @@ public final class SimpleGrammar
 
         prefix(TokenType.LPAREN, new PrefixParser<TokenType>(){
             @Override
-            public Expr parse(PrattParser prattParser, Token<TokenType> tokenTypeToken) throws ParseException {
-                Expr result = prattParser.parseExpression(0);
+            public Expr<TokenType> parse(PrattParser<TokenType> prattParser, Token<TokenType> tokenTypeToken) throws ParseException {
+                Expr<TokenType> result = prattParser.parseExpression(0);
                 if(prattParser.current().getType() != TokenType.RPAREN) {
                     throw new ParseException("Unmatched right parenthesis");
                 }
@@ -57,7 +57,7 @@ public final class SimpleGrammar
         System.out.println("expr = " + expr);
     }
 
-    private static Expr parse(final String text) throws ParseException {
+    public static Expr<TokenType> parse(final String text) throws ParseException {
         final Lexer<TokenType> lexer = new JavaLexer(text, 0 , text.length());
         final PrattParser<TokenType> prattParser = new PrattParser<TokenType>(INSTANCE, lexer);
         return prattParser.parseExpression(0);

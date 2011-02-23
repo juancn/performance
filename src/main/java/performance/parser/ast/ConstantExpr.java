@@ -3,10 +3,15 @@ package performance.parser.ast;
 import performance.parser.Token;
 
 public class ConstantExpr<T>
-        extends Expr {
+        extends Expr<T> {
     private Token<T> token;
     public ConstantExpr(Token<T> token) {
         this.token = token;
+    }
+
+    @Override
+    public void visit(ExprVisitor<T> visitor) {
+        visitor.visit(this);
     }
 
     @Override

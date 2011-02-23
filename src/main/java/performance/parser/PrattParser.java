@@ -15,10 +15,10 @@ public final class PrattParser<T> {
         current = lexer.next();
     }
 
-    public Expr parseExpression(int stickiness) throws ParseException {
+    public Expr<T> parseExpression(int stickiness) throws ParseException {
         Token<T> token = consume();
         final PrefixParser<T> prefix = grammar.getPrefixParser(token);
-        Expr left = prefix.parse(this, token);
+        Expr<T> left = prefix.parse(this, token);
 
         while (stickiness < grammar.getStickiness(current())) {
             token = consume();

@@ -3,7 +3,7 @@ package performance.parser.ast;
 import performance.parser.Token;
 
 public class UnaryExpr<T>
-        extends Expr {
+        extends Expr<T> {
     private Token<T> token;
     private Expr op;
 
@@ -11,6 +11,12 @@ public class UnaryExpr<T>
         this.token = token;
         this.op = op;
     }
+
+    @Override
+    public void visit(ExprVisitor<T> visitor) {
+        visitor.visit(this);
+    }
+
 
     @Override
     public String toString() {

@@ -10,7 +10,7 @@ public class InfixParser<T> {
         this.stickiness = stickiness;
     }
 
-    public Expr parse(PrattParser prattParser, Expr left, Token<T> token)
+    public Expr<T> parse(PrattParser<T> prattParser, Expr<T> left, Token<T> token)
             throws ParseException {
         return new BinaryExpr<T>(token, left, prattParser.parseExpression(getStickiness()));
     }

@@ -1,13 +1,13 @@
 package performance.runtime;
 
 
+import performance.parser.ParseException;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public final class ThreadHelper
         implements MethodListener {
-
-
     private final Deque<PerformanceExpectation> listeners = new ArrayDeque<PerformanceExpectation>();
 
     @Override
@@ -33,14 +33,23 @@ public final class ThreadHelper
     }
 
     public Object beginExpectation(final String clazz, final String name, final String expression) {
-        final PerformanceExpectation expectation = new PerformanceExpectation(clazz, name, expression);
-        listeners.add(expectation);
-        return expectation;
+        try {
+            final PerformanceExpectation expectation = new PerformanceExpectation(clazz, name, expression);
+            listeners.add(expectation);
+            return expectation;
+        } catch (ParseException e) {
+            System.err.println("Error parsing: " + expression + " on " + clazz + "." + name);
+            return FAILED;
+        }
     }
 
     public void endExpectation(final Object handle) {
-        final PerformanceExpectation received = (PerformanceExpectation) handle;
-        PerformanceExpectation expected = listeners.removeLast();
-        assert expected == received;
+        if (handle != FAILED) {
+            final PerformanceExpectation received = (PerformanceExpectation) handle;
+            PerformanceExpectation expected = listeners.removeLast();
+            assert expected == received;
+        }
     }
+
+    private static final Object FAILED = new Object();
 }

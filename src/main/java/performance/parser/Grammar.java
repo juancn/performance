@@ -1,7 +1,5 @@
 package performance.parser;
 
-import performance.compiler.TokenType;
-
 import java.util.HashMap;
 import java.util.Map;
 

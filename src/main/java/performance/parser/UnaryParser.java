@@ -11,7 +11,7 @@ class UnaryParser<T>
         this.stickiness = stickiness;
     }
 
-    public Expr parse(PrattParser prattParser, Token<T> token)
+    public Expr<T> parse(PrattParser<T> prattParser, Token<T> token)
             throws ParseException {
         return new UnaryExpr<T>(token, prattParser.parseExpression(stickiness));
     }
