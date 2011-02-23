@@ -1,15 +1,33 @@
 package performance.transformer;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+import performance.annotation.Metric;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class ClassTransformer extends ClassAdapter {
     private final String className;
+    private List<AnnotationCollector> metrics = new ArrayList<AnnotationCollector>();
 
     public ClassTransformer(ClassWriter classWriter, String className) {
         super(classWriter);
         this.className = className;
+    }
+
+    @Override
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        AnnotationVisitor av = super.visitAnnotation(desc, visible);
+        if(METRIC_DESCRIPTOR.equals(desc)) {
+            AnnotationCollector annotationCollector = new AnnotationCollector(av, desc, visible);
+            metrics.add(annotationCollector);
+            av = annotationCollector;
+        }
+        return av;
     }
 
     @Override
@@ -18,4 +36,5 @@ class ClassTransformer extends ClassAdapter {
         return new MethodTransformer(className, methodVisitor, access, name, desc);
     }
 
+   private static final String METRIC_DESCRIPTOR = Type.getDescriptor(Metric.class);
 }

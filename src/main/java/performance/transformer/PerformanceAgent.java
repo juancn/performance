@@ -4,8 +4,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -21,33 +19,23 @@ public class PerformanceAgent
                             final ProtectionDomain protectionDomain,
                             final byte[] bytecode) throws IllegalClassFormatException
     {
-        if(className.startsWith("performance")) {
+        if(className.startsWith("performance/runtime")) {
             return bytecode;
         }
 
         byte[] bytes;
         try {
             final ClassReader classReader = new ClassReader(bytecode);
-            final ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS
-//                    | ClassWriter.COMPUTE_FRAMES
-            );
+            final ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
             final ClassVisitor visitor = new ClassTransformer(classWriter, className);
             classReader.accept(visitor, ClassReader.EXPAND_FRAMES);
             bytes = classWriter.toByteArray();
         } catch (Exception e) {
-            System.out.println("*** ERROR PROCESSING:  " + className);
-            e.printStackTrace();
-            return bytecode;
-        }
-
-        if(className.equals("Test")) {
-            try {
-                FileOutputStream f = new FileOutputStream("/Users/juancn/X.class");
-                f.write(bytes);
-                f.close();
-            } catch (IOException e) {
+            synchronized (System.err) {
+                System.err.println("*** ERROR INSTRUMENTING:  " + className);
                 e.printStackTrace();
             }
+            return bytecode;
         }
         return bytes;
     }
