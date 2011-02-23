@@ -18,11 +18,7 @@ public final class Helper {
         return "HANDLE OF(" + expression + ")";
     }
 
-    public static void endExpectation(final String clazz, final String name, final Object handle) {
-        System.out.println("%%% End: " + handle + " @ " + clazz + "." + name);
-    }
-
-    public static void debug(final Object handle) {
-        System.out.println("%%% DEBUG: " + handle );
+    public static void endExpectation(final Object handle) {
+        System.out.println("%%% End: " + handle);
     }
 }

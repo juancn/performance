@@ -5,6 +5,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
+import org.objectweb.asm.commons.Method;
 import performance.annotation.Expect;
 import performance.runtime.Helper;
 
@@ -14,7 +15,7 @@ import java.util.List;
 class MethodTransformer extends AdviceAdapter {
     private final String className;
     private final String methodName;
-    private final List<AnnotationCollector> annotations = new ArrayList<AnnotationCollector>();
+    private final List<ExpectationInfo> expectations = new ArrayList<ExpectationInfo>();
 
     //Helper labels
     private final Label startFinally = new Label();
@@ -31,7 +32,7 @@ class MethodTransformer extends AdviceAdapter {
         AnnotationVisitor av = super.visitAnnotation(desc, visible);
         if(desc.equals(EXPECT_DESCRIPTOR)) {
             final AnnotationCollector annotationCollector = new AnnotationCollector(av, desc, visible);
-            annotations.add(annotationCollector);
+            expectations.add(new ExpectationInfo(annotationCollector));
             av = annotationCollector;
         }
         return av;
@@ -66,38 +67,54 @@ class MethodTransformer extends AdviceAdapter {
     @Override
     protected void onMethodEnter()
     {
-        for (AnnotationCollector annotation : annotations) {
-            if(annotation.getDescriptor().equals(EXPECT_DESCRIPTOR)) {
+        for (ExpectationInfo expectation : expectations) {
+            expectation.localVar = newLocal(Type.getType(Object.class));
 
-                visitLdcInsn(className.replace('/', '.'));
-                visitLdcInsn(methodName);
-                visitLdcInsn(String.valueOf(annotation.getValue("value")));
-                visitMethodInsn(INVOKESTATIC, HELPER_CLASS, "beginExpectation", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
-                visitInsn(POP);
-            }
+            visitLdcInsn(className.replace('/', '.'));
+            visitLdcInsn(methodName);
+            visitLdcInsn(String.valueOf(expectation.annotation.getValue("value")));
+
+            invokeStatic(HELPER, BEGIN_EXPECTATION);
+            storeLocal(expectation.localVar);
         }
 
         visitLdcInsn(className.replace('/', '.'));
         visitLdcInsn(methodName);
-        visitMethodInsn(INVOKESTATIC, HELPER_CLASS, "methodEnter", "(Ljava/lang/String;Ljava/lang/String;)V");
+        invokeStatic(HELPER, METHOD_ENTER);
     }
 
     private void onFinally(int opcode) {
         visitLdcInsn(className.replace('/', '.'));
         visitLdcInsn(methodName);
-        String method = opcode == ATHROW? "methodExceptionExit" : "methodNormalExit";
-        visitMethodInsn(INVOKESTATIC, HELPER_CLASS, method, "(Ljava/lang/String;Ljava/lang/String;)V");
 
-        for (AnnotationCollector annotation : annotations) {
-            if(annotation.getDescriptor().equals(EXPECT_DESCRIPTOR)) {
-                visitLdcInsn(className.replace('/', '.'));
-                visitLdcInsn(methodName);
-                visitLdcInsn(String.valueOf(annotation.getValue("value")));
-                visitMethodInsn(INVOKESTATIC, HELPER_CLASS, "endExpectation", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V");
-            }
+        if (opcode == ATHROW) {
+            invokeStatic(HELPER, METHOD_EXCEPTION_EXIT);
+        } else {
+            invokeStatic(HELPER, METHOD_NORMAL_EXIT);
+        }
+
+        for (ExpectationInfo expectation : expectations) {
+            loadLocal(expectation.localVar);
+            invokeStatic(HELPER, END_EXPECTATION);
+        }
+    }
+
+    private static class ExpectationInfo {
+        final AnnotationCollector annotation;
+        int localVar = -1;
+
+        private ExpectationInfo(AnnotationCollector annotation) {
+            this.annotation = annotation;
         }
     }
 
     private static final String EXPECT_DESCRIPTOR = Type.getDescriptor(Expect.class);
-    private static final String HELPER_CLASS = Helper.class.getCanonicalName().replace('.', '/');
+
+    private static final Type HELPER = Type.getType(Helper.class);
+    private static final Method BEGIN_EXPECTATION = new Method("beginExpectation", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+    private static final Method END_EXPECTATION = new Method("endExpectation", "(Ljava/lang/Object;)V");
+    private static final Method METHOD_ENTER = new Method("methodEnter", "(Ljava/lang/String;Ljava/lang/String;)V");
+    private static final Method METHOD_NORMAL_EXIT = new Method("methodNormalExit","(Ljava/lang/String;Ljava/lang/String;)V");
+    private static final Method METHOD_EXCEPTION_EXIT = new Method("methodExceptionExit","(Ljava/lang/String;Ljava/lang/String;)V");
+
 }

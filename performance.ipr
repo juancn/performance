@@ -183,6 +183,7 @@
       <words>
         <w>bytecode</w>
         <w>ljava</w>
+        <w>opcode</w>
         <w>premain</w>
         <w>ttype</w>
         <w>unary</w>
