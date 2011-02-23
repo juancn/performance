@@ -4,13 +4,11 @@ import performance.parser.Token;
 
 public class BinaryExpr<T>
         extends Expr<T> {
-    private Token<T> token;
     private Expr<T> left;
     private Expr<T> right;
 
-
     public BinaryExpr(Token<T> token, Expr<T> left, Expr<T> right) {
-        this.token = token;
+        super(token);
         this.left = left;
         this.right = right;
     }
@@ -25,9 +23,6 @@ public class BinaryExpr<T>
         visitor.visit(this);
     }
 
-    public Token<T> getToken() {
-        return token;
-    }
 
     public Expr<T> getLeft() {
         return left;

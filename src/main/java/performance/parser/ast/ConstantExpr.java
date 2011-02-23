@@ -4,9 +4,8 @@ import performance.parser.Token;
 
 public class ConstantExpr<T>
         extends Expr<T> {
-    private Token<T> token;
     public ConstantExpr(Token<T> token) {
-        this.token = token;
+        super(token);
     }
 
     @Override
@@ -19,7 +18,4 @@ public class ConstantExpr<T>
         return String.valueOf(token.getText());
     }
 
-    public Token<T> getToken() {
-        return token;
-    }
 }

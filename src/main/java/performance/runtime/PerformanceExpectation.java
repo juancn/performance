@@ -2,13 +2,16 @@ package performance.runtime;
 
 import performance.compiler.SimpleGrammar;
 import performance.compiler.TokenType;
-import static performance.compiler.TokenType.*;
 import performance.parser.ParseException;
-import performance.parser.Token;
 import performance.parser.ast.BinaryExpr;
 import performance.parser.ast.ConstantExpr;
 import performance.parser.ast.Expr;
 import performance.parser.ast.ExprAdapter;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 public class PerformanceExpectation
     implements MethodListener
@@ -17,10 +20,8 @@ public class PerformanceExpectation
     private final String methodName;
     private final String expression;
 
-    //TODO: hack
-    private String checkFor;
-    private int upperBound;
-    private int count;
+    private Op validation;
+    private List<MethodMatch> methodMatches;
 
     public PerformanceExpectation(final String className, final String methodName, final String expression)
             throws ParseException
@@ -29,49 +30,17 @@ public class PerformanceExpectation
         this.methodName = methodName;
         this.expression = expression;
 
-        Expr<TokenType> expr = SimpleGrammar.parse(expression);
-        System.out.println("parse = " + expr);
-        expr.visit(new ExprAdapter<TokenType>() {
-            public ConstantExpr<TokenType> lastConstant;
-
-            @Override
-            public void visit(BinaryExpr<TokenType> expr) {
-                switch (expr.getToken().getType()) {
-                    case LT:
-                        //TODO: Puajjj!
-                        expr.getLeft().visit(this);
-                        if (lastConstant != null) {
-                            Token<TokenType> left = lastConstant.getToken();
-                            lastConstant = null;
-
-                            expr.getRight().visit(this);
-                            if (lastConstant != null) {
-                                Token<TokenType> right = lastConstant.getToken();
-                                if(left.getType() == ID && right.getType() == INT_LITERAL) {
-                                    checkFor = String.valueOf(left.getText());
-                                    upperBound = Integer.parseInt(String.valueOf(right.getText()));
-                                }
-                            }
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void visit(ConstantExpr<TokenType> expr) {
-                lastConstant = expr;
-            }
-        });
-
-        System.out.println("checkFor = " + checkFor);
-        System.out.println("upperBound = " + upperBound);
-
+        final Expr<TokenType> expr = SimpleGrammar.parse(expression);
+        final BinaryOpVisitor visitor = new BinaryOpVisitor();
+        expr.visit(visitor);
+        validation = visitor.getOpTree();
+        methodMatches = visitor.getMethodMatches();
     }
 
     @Override
     public void methodEnter(String clazz, String name) {
-        if(name.equals(checkFor)) {
-            ++count;
+        for (MethodMatch methodMatch : methodMatches) {
+            methodMatch.match(clazz, name);
         }
     }
 
@@ -85,8 +54,180 @@ public class PerformanceExpectation
     }
 
     public void validate() {
-        if(checkFor != null && count >= upperBound) {
-            throw new AssertionError("Method '" + checkFor + "' was called " + count +" times. Maximum was: " + upperBound);
+        if(!validation.booleanVal()) {
+            throw new AssertionError("Method '" + className + "." + methodName + "' did not fulfil: " + expression + "\n" + methodMatches);
+        }
+    }
+
+
+    private static class BinaryOpVisitor
+            extends ExprAdapter<TokenType> {
+
+        private Deque<Op> stack = new ArrayDeque<Op>();
+        private List<MethodMatch> methodMatches = new ArrayList<MethodMatch>();
+
+        @Override
+        public void visit(BinaryExpr<TokenType> expr) {
+            final Expr<TokenType> left = expr.getLeft();
+            final Expr<TokenType> right = expr.getRight();
+
+            switch (expr.getToken().getType()) {
+                case LT:
+                case LE:
+                case GT:
+                case GE:
+                case LOR:
+                case LAND:
+                    //Visit in reverse so we avoid some vars
+                    right.visit(this);
+                    left.visit(this);
+                    stack.add(new BinOp(expr.getToken().getType(), stack.removeLast(), stack.removeLast()));
+                    break;
+                case DOT:
+                    methodMatch(valueOf(left).toString(), valueOf(right).toString());
+                    break;
+            }
+        }
+
+        private ValueVisitor valueOf(Expr<TokenType> right) {
+            final ValueVisitor mtdPattern = new ValueVisitor();
+            right.visit(mtdPattern);
+            return mtdPattern;
+        }
+
+        private void methodMatch(String classPattern1, String mtdPattern1) {
+            MethodMatch methodMatch = new MethodMatch(classPattern1, mtdPattern1);
+            stack.add(methodMatch);
+            methodMatches.add(methodMatch);
+        }
+
+        @Override
+        public void visit(ConstantExpr<TokenType> expr) {
+            switch (expr.getToken().getType()) {
+                case INT_LITERAL:
+                    stack.add(new IntValue(Integer.parseInt(String.valueOf(expr.getToken().getText()))));
+                    break;
+                case ID:
+                    methodMatch(null, String.valueOf(expr.getToken().getText()));
+                    break;
+            }
+        }
+
+        public Op getOpTree() {
+            return stack.peekLast();
+        }
+
+        public List<MethodMatch> getMethodMatches() {
+            return methodMatches;
+        }
+    }
+
+    private static class ValueVisitor
+            extends ExprAdapter<TokenType> {
+        StringBuilder sb = new StringBuilder();
+
+        @Override
+        public void visit(BinaryExpr<TokenType> expr) {
+            switch (expr.getToken().getType()) {
+                case DOT:
+                    expr.getLeft().visit(this);
+                    sb.append('.');
+                    expr.getRight().visit(this);
+                    break;
+            }
+        }
+
+        @Override
+        public void visit(ConstantExpr<TokenType> expr) {
+            sb.append(expr.getToken().getText());
+        }
+
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
+    }
+
+    static abstract class Op {
+        boolean booleanVal() {
+            throw new UnsupportedOperationException();
+        }
+
+        int intVal() {
+            throw new UnsupportedOperationException();
+        }
+    }
+    static class BinOp extends Op {
+        TokenType operator;
+        Op left;
+        Op right;
+
+        BinOp(TokenType operator, Op left, Op right) {
+            this.operator = operator;
+            this.left = left;
+            this.right = right;
+        }
+
+        boolean booleanVal()
+        {
+            switch(operator) {
+                case LT:
+                    return left.intVal() < right.intVal();
+                case LE:
+                    return left.intVal() <= right.intVal();
+                case GT:
+                    return left.intVal() > right.intVal();
+                case GE:
+                    return left.intVal() >= right.intVal();
+                case LOR:
+                    return left.booleanVal() || right.booleanVal();
+                case LAND:
+                    return left.booleanVal() && right.booleanVal();
+                default:
+                    return super.booleanVal();
+            }
+        }
+    }
+
+    static class MethodMatch extends Op {
+        String classPattern;
+        String mtdPattern;
+
+        int count;
+
+        MethodMatch(String classPattern, String mtdPattern) {
+            this.classPattern = classPattern;
+            this.mtdPattern = mtdPattern;
+        }
+
+        @Override
+        int intVal() {
+            return count;
+        }
+
+        void match(String className, String mtdName)
+        {
+            if(classPattern == null && mtdName.equals(mtdPattern)) {
+                ++count;
+            }
+        }
+
+        @Override
+        public String toString() {
+
+            return "#" + (classPattern==null?"":classPattern) + mtdPattern + "=" + count;
+        }
+    }
+
+    static class IntValue extends Op {
+        int value;
+        IntValue(int value) {
+            this.value = value;
+        }
+
+        @Override
+        int intVal() {
+            return value;
         }
     }
 }
