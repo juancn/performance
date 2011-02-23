@@ -1,23 +1,21 @@
 h1. Performance Invariants
 
 This library implements a Java agent and a couple of annotations to declare performance invariants in Java code.
-The implementation is currently incomplete.
+The implementation is currently incomplete (and very primitive).
 
 For more details on the ideas behind it see: "http://www.codng.com/2011/02/performance-invariants.html":http://www.codng.com/2011/02/performance-invariants.html
 
 h2. Compiling
 
 After you checkout the source code, all you have to do is:
-<pre>
-~/performance>mvn package
+<pre>~/performance>mvn package
 </pre>
 
 h2. Running the agent
 
 You just need to add the agent and jar to the JVM:
-<pre>
-java -javaagent:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar \ 
-	 -Xbootclasspath/a:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar -cp [classpath] MainClass
+<pre>java -javaagent:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar \ 
+     -Xbootclasspath/a:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar -cp [classpath] MainClass
 </pre>
 Since it can impact performance, the agent is not automatically installed if it's just included on the classpath, I might change this afterwards.
 
@@ -28,22 +26,34 @@ import performance.annotations.Expect;
 
 public class Test
 {
-	static void bah(){}
+    static void bah(){}
 
-	@Expect("bah < 10")
-	static void foo(){
-		for(int i = 0; i < 100; i++) {
-			bah();
-		}	
-	}
-	
-	public static void main(String[] args) {
-		foo();
-	}
+    @Expect("bah < 10")
+    static void foo(){
+        for(int i = 0; i < 100; i++) {
+            bah();
+        }   
+    }
+    
+    public static void main(String[] args) {
+        foo();
+    }
 }
 </pre>
 
-
+After compiling it, you can run it with:
+<pre>java -javaagent:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar \ 
+     -Xbootclasspath/a:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar Test
+</pre>
+It should produce output similar to the following:
+<pre>Exception in thread "main" java.lang.AssertionError: Method 'Test.foo' did not fulfil: bah < 10
+[#<any>.bah=100]
+            at performance.runtime.PerformanceExpectation.validate(PerformanceExpectation.java:58)
+            at performance.runtime.ThreadHelper.endExpectation(ThreadHelper.java:49)
+            at performance.runtime.Helper.endExpectation(Helper.java:57)
+            at Test.foo(Test.java:20)
+            at Test.main(Test.java:25)
+</pre>
 
 h2. License
 
