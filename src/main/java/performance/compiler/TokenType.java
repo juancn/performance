@@ -1,4 +1,4 @@
-package performance.lexer;
+package performance.compiler;
 
 public enum TokenType {
     ABSTRACT,

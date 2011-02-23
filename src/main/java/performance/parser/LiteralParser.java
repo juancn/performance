@@ -5,8 +5,8 @@ import performance.parser.ast.Expr;
 
 class LiteralParser<T>
         extends PrefixParser<T> {
-    Expr parse(PrattParser prattParser, Token<T> token)
-            throws LexicalException {
+    public Expr parse(PrattParser prattParser, Token<T> token)
+            throws ParseException {
         return new ConstantExpr<T>(token);
     }
 }

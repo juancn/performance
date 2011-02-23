@@ -1,5 +1,7 @@
 package performance.parser;
 
+import performance.compiler.TokenType;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,25 +22,25 @@ public class Grammar<T> {
         return infixParsers.get(token.getType());
     }
 
-    public void infix(T ttype, int stickiness)
+    protected void infix(T ttype, int stickiness)
     {
         infix(ttype, new InfixParser<T>(stickiness));
     }
 
-    private void infix(T ttype, InfixParser<T> value) {
+    protected void infix(T ttype, InfixParser<T> value) {
         infixParsers.put(ttype, value);
     }
 
-    public void unary(T ttype, int stickiness)
+    protected void unary(T ttype, int stickiness)
     {
         prefixParsers.put(ttype, new UnaryParser<T>(stickiness));
     }
-    public void constant(T ttype)
+    protected void constant(T ttype)
     {
         prefix(ttype, new LiteralParser<T>());
     }
 
-    private void prefix(T ttype, LiteralParser<T> value) {
+    protected void prefix(T ttype, PrefixParser<T> value) {
         prefixParsers.put(ttype, value);
     }
 }

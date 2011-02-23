@@ -1,14 +1,14 @@
 package performance.parser;
 
-public class LexicalException
+public class ParseException
         extends Exception
 {
-    public LexicalException(String message)
+    public ParseException(String message)
     {
         super(message);
     }
 
-    public LexicalException(String message, Throwable cause)
+    public ParseException(String message, Throwable cause)
     {
         super(message, cause);
     }

@@ -1,8 +1,10 @@
-package performance.lexer;
+package performance.compiler;
 
 import performance.parser.Token;
 
-public class JavaToken implements Token {
+public class JavaToken
+        implements Token<TokenType>
+{
 
     //~ Instance fields ......................................................................................
 

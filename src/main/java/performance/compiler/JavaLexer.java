@@ -1,7 +1,8 @@
-package performance.lexer;
+package performance.compiler;
 
 import performance.parser.Lexer;
-import performance.parser.LexicalException;
+import performance.parser.ParseException;
+import performance.parser.Token;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -9,7 +10,9 @@ import java.util.TreeMap;
 
 
 @SuppressWarnings({"StatementWithEmptyBody"})
-public class JavaLexer implements Lexer {
+public class JavaLexer
+        implements Lexer<TokenType>
+{
     public CharSequence text;
     private int startOffset;
     public int offset;
@@ -31,7 +34,7 @@ public class JavaLexer implements Lexer {
     }
 
     @Override
-    public JavaToken next() throws LexicalException
+    public Token<TokenType> next() throws ParseException
     {
         skipWhiteSpace();
 
@@ -52,7 +55,7 @@ public class JavaLexer implements Lexer {
         } else {
             TokenType ttype = parseMultichar(c);
             if(ttype == null) {
-                throw new LexicalException("unexpected character: " + c);
+                throw new ParseException("unexpected character: " + c);
             } else {
                 token = makeToken(ttype);
             }
@@ -61,7 +64,7 @@ public class JavaLexer implements Lexer {
         return token;
     }
 
-    private JavaToken parseString() throws LexicalException
+    private JavaToken parseString() throws ParseException
     {
         char c = read();
         while(c != '"') {
@@ -87,13 +90,13 @@ public class JavaLexer implements Lexer {
                 case '7':
                     break;
                 default:
-                    throw new LexicalException("Unrecognized escape sequence");
+                    throw new ParseException("Unrecognized escape sequence");
                 }
                 break;
             case '\n':
             case '\r':
             case EOF:
-                throw new LexicalException("Unterminated string constant");
+                throw new ParseException("Unterminated string constant");
             }
         }
         unread();

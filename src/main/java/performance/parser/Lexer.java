@@ -1,5 +1,5 @@
 package performance.parser;
 
 public interface Lexer<T> {
-    Token<T> next() throws LexicalException;
+    Token<T> next() throws ParseException;
 }
