@@ -19,7 +19,8 @@ public class PerformanceAgent
                             final ProtectionDomain protectionDomain,
                             final byte[] bytecode) throws IllegalClassFormatException
     {
-        if(className.startsWith("performance/runtime")) {
+        if(className.startsWith("performance/runtime")
+                || className.equals("java/lang/ThreadLocal")) {
             return bytecode;
         }
 
