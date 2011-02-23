@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Premain-Class>performance.transformer.ClassTransformer</Premain-Class>
+                            <Premain-Class>performance.transformer.PerformanceAgent</Premain-Class>
                             <Can-Redefine-Classes>false</Can-Redefine-Classes>
                         </manifestEntries>
                     </archive>
@@ -45,7 +45,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifestEntries>
-                            <Premain-Class>performance.transformer.ClassTransformer</Premain-Class>
+                            <Premain-Class>performance.transformer.PerformanceAgent</Premain-Class>
                             <Can-Redefine-Classes>false</Can-Redefine-Classes>
                         </manifestEntries>
                     </archive>
