@@ -5,6 +5,46 @@ The implementation is currently incomplete.
 
 For more details on the ideas behind it see: "http://www.codng.com/2011/02/performance-invariants.html":http://www.codng.com/2011/02/performance-invariants.html
 
+h2. Compiling
+
+After you checkout the source code, all you have to do is:
+<pre>
+~/performance>mvn package
+</pre>
+
+h2. Running the agent
+
+You just need to add the agent and jar to the JVM:
+<pre>
+java -javaagent:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar \ 
+	 -Xbootclasspath/a:$HOME/performance/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar -cp [classpath] MainClass
+</pre>
+Since it can impact performance, the agent is not automatically installed if it's just included on the classpath, I might change this afterwards.
+
+h2. Annotating Methods
+
+<pre>
+import performance.annotations.Expect;
+
+public class Test
+{
+	static void bah(){}
+
+	@Expect("bah < 10")
+	static void foo(){
+		for(int i = 0; i < 100; i++) {
+			bah();
+		}	
+	}
+	
+	public static void main(String[] args) {
+		foo();
+	}
+}
+</pre>
+
+
+
 h2. License
 
 Licensed under the Apache License, Version 2.0 (the "License");
