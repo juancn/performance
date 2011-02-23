@@ -215,7 +215,7 @@ public class PerformanceExpectation
         @Override
         public String toString() {
 
-            return "#" + (classPattern==null?"":classPattern) + mtdPattern + "=" + count;
+            return "#" + (classPattern==null?"<any>":classPattern) + "." + mtdPattern + "=" + count;
         }
     }
 
