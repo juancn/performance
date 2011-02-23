@@ -18,4 +18,8 @@ public class ConstantExpr<T>
     public String toString() {
         return String.valueOf(token.getText());
     }
+
+    public Token<T> getToken() {
+        return token;
+    }
 }

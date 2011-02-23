@@ -44,10 +44,9 @@ public final class ThreadHelper
     }
 
     public void endExpectation(final Object handle) {
-        if (handle != FAILED) {
-            final PerformanceExpectation received = (PerformanceExpectation) handle;
+        if (handle == listeners.peekLast()) {
             PerformanceExpectation expected = listeners.removeLast();
-            assert expected == received;
+            expected.validate();
         }
     }
 
