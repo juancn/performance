@@ -33,7 +33,7 @@ public final class SimpleGrammar
             @Override
             public Expr<TokenType> parse(PrattParser<TokenType> prattParser, Token<TokenType> tokenTypeToken) throws ParseException {
                 Expr<TokenType> result = prattParser.parseExpression(0);
-                if(prattParser.current().getType() != TokenType.RPAREN) {
+                if(prattParser.consume().getType() != TokenType.RPAREN) {
                     throw new ParseException("Unmatched right parenthesis");
                 }
                 return result;
@@ -52,7 +52,7 @@ public final class SimpleGrammar
     public static final SimpleGrammar INSTANCE = new SimpleGrammar();
 
     public static void main(String[] args) throws ParseException {
-        String text = "java.lang.String.toString < 5 || a < b";
+        String text = "(1+2)*3";
         Expr expr = parse(text);
         System.out.println("expr = " + expr);
     }

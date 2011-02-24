@@ -34,7 +34,7 @@ public final class PrattParser<T> {
         return current;
     }
 
-    private Token<T> consume() throws ParseException {
+    public Token<T> consume() throws ParseException {
         Token<T> result = current;
         current = lexer.next();
         return result;
