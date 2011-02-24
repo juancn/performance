@@ -33,7 +33,7 @@ public class Grammar<T> {
     {
         prefixParsers.put(ttype, new UnaryParser<T>(stickiness));
     }
-    protected void constant(T ttype)
+    protected void literal(T ttype)
     {
         prefix(ttype, new LiteralParser<T>());
     }

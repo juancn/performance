@@ -43,12 +43,12 @@ public final class SimpleGrammar
             }
         });
 
-        constant(INT_LITERAL);
-        constant(LONG_LITERAL);
-        constant(FLOAT_LITERAL);
-        constant(DOUBLE_LITERAL);
-        constant(STRING);
-        constant(ID);
+        literal(INT_LITERAL);
+        literal(LONG_LITERAL);
+        literal(FLOAT_LITERAL);
+        literal(DOUBLE_LITERAL);
+        literal(STRING);
+        literal(ID);
     }
 
 
