@@ -40,7 +40,7 @@ public class JavaLexer
 
         JavaToken token;
         tokenStart = offset;
-        char c = read();
+        final char c = read();
 
 
         if(c == EOF) {
@@ -48,16 +48,21 @@ public class JavaLexer
         } else if(isDigit(c,10)) {
             unread();
             token = parseNumber();
-        } else if(isIdStart(c)) {
-            token = parseId();
-        } else if(c == '"') {
-            token = parseString();
+        } else if(read() == '{' && c == '$') { //Special case
+            token = makeToken(TokenType.DOLLAR_LCURLY);
         } else {
-            TokenType ttype = parseMultichar(c);
-            if(ttype == null) {
-                throw new ParseException("unexpected character: " + c);
+            unread();
+            if(isIdStart(c)) {
+                token = parseId();
+            } else if(c == '"') {
+                token = parseString();
             } else {
-                token = makeToken(ttype);
+                TokenType ttype = parseMultichar(c);
+                if(ttype == null) {
+                    throw new ParseException("unexpected character: " + c);
+                } else {
+                    token = makeToken(ttype);
+                }
             }
         }
 
@@ -359,7 +364,6 @@ public class JavaLexer
         reserved("null", TokenType.NULL);
         reserved("true", TokenType.TRUE);
         reserved("false", TokenType.FALSE);
-        reserved("atomic",TokenType.ATOMIC);
         reserved("abstract",TokenType.ABSTRACT);
         reserved("boolean",TokenType.BOOLEAN);
         reserved("break",TokenType.BREAK);

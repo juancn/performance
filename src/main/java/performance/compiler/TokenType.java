@@ -3,7 +3,6 @@ package performance.compiler;
 public enum TokenType {
     ABSTRACT,
     ASSIGN,
-    ATOMIC,
     BAND,
     BOOLEAN,
     BOR,
@@ -23,6 +22,7 @@ public enum TokenType {
     DEFAULT,
     DIV,
     DIV_ASSIGN,
+    DOLLAR_LCURLY,
     DO,
     DOT,
     DOUBLE,
