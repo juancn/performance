@@ -26,6 +26,7 @@ public final class SimpleGrammar
         infix(TokenType.DIV, 60);
 
         unary(TokenType.MINUS, 70);
+        unary(TokenType.NOT, 70);
 
         infix(TokenType.DOT, 80);
 
@@ -52,7 +53,7 @@ public final class SimpleGrammar
     public static final SimpleGrammar INSTANCE = new SimpleGrammar();
 
     public static void main(String[] args) throws ParseException {
-        String text = "(1+2)*3";
+        String text = "Test.bah < 9*Test.buu";
         Expr expr = parse(text);
         System.out.println("expr = " + expr);
     }

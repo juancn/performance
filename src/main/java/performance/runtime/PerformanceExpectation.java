@@ -7,6 +7,7 @@ import performance.parser.ast.BinaryExpr;
 import performance.parser.ast.ConstantExpr;
 import performance.parser.ast.Expr;
 import performance.parser.ast.ExprAdapter;
+import performance.parser.ast.UnaryExpr;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -78,6 +79,10 @@ public class PerformanceExpectation
                 case GE:
                 case LOR:
                 case LAND:
+                case PLUS:
+                case MINUS:
+                case MUL:
+                case DIV:
                     //Visit in reverse so we avoid some vars
                     right.visit(this);
                     left.visit(this);
@@ -85,6 +90,17 @@ public class PerformanceExpectation
                     break;
                 case DOT:
                     methodMatch(valueOf(left).toString(), valueOf(right).toString());
+                    break;
+            }
+        }
+
+        @Override
+        public void visit(UnaryExpr<TokenType> expr) {
+            switch (expr.getToken().getType()) {
+                case MINUS:
+                case NOT:
+                    expr.getFirst().visit(this);
+                    stack.add(new UnaryOp(expr.getToken().getType(), stack.removeLast()));
                     break;
             }
         }
@@ -104,8 +120,11 @@ public class PerformanceExpectation
         @Override
         public void visit(ConstantExpr<TokenType> expr) {
             switch (expr.getToken().getType()) {
+                case DOUBLE_LITERAL:
+                case FLOAT_LITERAL:
+                case LONG_LITERAL:
                 case INT_LITERAL:
-                    stack.add(new IntValue(Integer.parseInt(String.valueOf(expr.getToken().getText()))));
+                    stack.add(new NumberOp(Double.parseDouble(String.valueOf(expr.getToken().getText()))));
                     break;
                 case ID:
                     methodMatch(null, String.valueOf(expr.getToken().getText()));
@@ -172,7 +191,7 @@ public class PerformanceExpectation
         @Override
         boolean booleanVal()
         {
-            switch(operator) {
+                switch(operator) {
                 case LT:
                     return left.doubleVal() < right.doubleVal();
                 case LE:
@@ -206,6 +225,38 @@ public class PerformanceExpectation
             }
         }
     }
+
+    static class UnaryOp extends Op {
+        TokenType operator;
+        Op first;
+
+        UnaryOp(TokenType operator, Op first) {
+            this.operator = operator;
+            this.first = first;
+        }
+
+        @Override
+        boolean booleanVal()
+        {
+            switch(operator) {
+                case NOT:
+                    return !first.booleanVal();
+                default:
+                    return super.booleanVal();
+            }
+        }
+
+        @Override
+        double doubleVal() {
+            switch(operator) {
+                case MINUS:
+                    return -first.doubleVal();
+                default:
+                    return super.doubleVal();
+            }
+        }
+    }
+
 
     static class MethodMatch extends Op {
         String classPattern;
@@ -265,9 +316,9 @@ public class PerformanceExpectation
         }
     }
 
-    static class IntValue extends Op {
-        int value;
-        IntValue(int value) {
+    static class NumberOp extends Op {
+        double value;
+        NumberOp(double value) {
             this.value = value;
         }
 

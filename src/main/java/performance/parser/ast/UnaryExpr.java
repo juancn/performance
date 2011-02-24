@@ -4,11 +4,15 @@ import performance.parser.Token;
 
 public class UnaryExpr<T>
         extends Expr<T> {
-    private Expr op;
+    private Expr<T> first;
 
-    public UnaryExpr(Token<T> token, Expr op) {
+    public UnaryExpr(Token<T> token, Expr<T> first) {
         super(token);
-        this.op = op;
+        this.first = first;
+    }
+
+    public Expr<T> getFirst() {
+        return first;
     }
 
     @Override
@@ -18,6 +22,6 @@ public class UnaryExpr<T>
 
     @Override
     public String toString() {
-        return "{ " + token.getText() + " " + op + " }";
+        return "{ " + token.getText() + " " + first + " }";
     }
 }
