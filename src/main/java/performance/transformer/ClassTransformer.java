@@ -6,13 +6,11 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import performance.annotation.Metric;
-
-import java.util.ArrayList;
-import java.util.List;
+import performance.util.MutableArray;
 
 class ClassTransformer extends ClassAdapter {
     private final String className;
-    private List<AnnotationCollector> metrics = new ArrayList<AnnotationCollector>();
+    private MutableArray<AnnotationCollector> metrics = new MutableArray<AnnotationCollector>();
 
     public ClassTransformer(ClassWriter classWriter, String className) {
         super(classWriter);

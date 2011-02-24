@@ -11,7 +11,7 @@ public final class ThreadHelper
     private final Deque<PerformanceExpectation> listeners = new ArrayDeque<PerformanceExpectation>();
 
     @Override
-    public void methodEnter(final String clazz, final String name) {
+    public void methodEnter(final Class clazz, final String name) {
         for (PerformanceExpectation listener : listeners) {
             listener.methodEnter(clazz, name);
         }
@@ -19,20 +19,20 @@ public final class ThreadHelper
 
 
     @Override
-    public void methodNormalExit(final String clazz, final String name) {
+    public void methodNormalExit(final Class clazz, final String name) {
         for (PerformanceExpectation listener : listeners) {
             listener.methodNormalExit(clazz, name);
         }
     }
 
     @Override
-    public void methodExceptionExit(final String clazz, final String name) {
+    public void methodExceptionExit(final Class clazz, final String name) {
         for (PerformanceExpectation listener : listeners) {
             listener.methodExceptionExit(clazz, name);
         }
     }
 
-    public Object beginExpectation(final String clazz, final String name, final String expression) {
+    public Object beginExpectation(final Class clazz, final String name, final String expression) {
         try {
             final PerformanceExpectation expectation = new PerformanceExpectation(clazz, name, expression);
             listeners.add(expectation);

@@ -16,7 +16,7 @@ public final class Helper {
         }
     };
 
-    public static void methodEnter(final String clazz, final String name) {
+    public static void methodEnter(final Class clazz, final String name) {
         if(enabled.get()) {
             try {
                 enabled.set(false);
@@ -27,7 +27,7 @@ public final class Helper {
         }
     }
 
-    public static void methodNormalExit(final String clazz, final String name) {
+    public static void methodNormalExit(final Class clazz, final String name) {
         if(enabled.get()) {
             try {
                 enabled.set(false);
@@ -38,7 +38,7 @@ public final class Helper {
         }
     }
 
-    public static void methodExceptionExit(final String clazz, final String name) {
+    public static void methodExceptionExit(final Class clazz, final String name) {
         if(enabled.get()) {
             try {
                 enabled.set(false);
@@ -49,7 +49,7 @@ public final class Helper {
         }
     }
 
-    public static Object beginExpectation(final String clazz, final String name, final String expression) {
+    public static Object beginExpectation(final Class clazz, final String name, final String expression) {
         return threadHelper.get().beginExpectation(clazz, name, expression);
     }
 

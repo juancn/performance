@@ -16,17 +16,17 @@ import java.util.List;
 public class PerformanceExpectation
     implements MethodListener
 {
-    private final String className;
+    private final Class ctxClass;
     private final String methodName;
     private final String expression;
 
     private Op validation;
     private List<MethodMatch> methodMatches;
 
-    public PerformanceExpectation(final String className, final String methodName, final String expression)
+    public PerformanceExpectation(final Class ctxClass, final String methodName, final String expression)
             throws ParseException
     {
-        this.className = className;
+        this.ctxClass = ctxClass;
         this.methodName = methodName;
         this.expression = expression;
 
@@ -38,24 +38,24 @@ public class PerformanceExpectation
     }
 
     @Override
-    public void methodEnter(String clazz, String name) {
+    public void methodEnter(Class clazz, String name) {
         for (MethodMatch methodMatch : methodMatches) {
             methodMatch.match(clazz, name);
         }
     }
 
     @Override
-    public void methodNormalExit(String clazz, String name) {
+    public void methodNormalExit(Class clazz, String name) {
     }
 
     @Override
-    public void methodExceptionExit(String clazz, String name) {
+    public void methodExceptionExit(Class clazz, String name) {
 
     }
 
     public void validate() {
         if(!validation.booleanVal()) {
-            throw new AssertionError("Method '" + className + "." + methodName + "' did not fulfil: " + expression + "\n" + methodMatches);
+            throw new AssertionError("Method '" + ctxClass.getName() + "." + methodName + "' did not fulfil: " + expression + "\n" + methodMatches);
         }
     }
 
@@ -150,13 +150,14 @@ public class PerformanceExpectation
 
     static abstract class Op {
         boolean booleanVal() {
-            throw new UnsupportedOperationException();
+            return false; //False is fine, since a false result ends in an AssertionError
         }
 
-        int intVal() {
+        double doubleVal() {
             throw new UnsupportedOperationException();
         }
     }
+
     static class BinOp extends Op {
         TokenType operator;
         Op left;
@@ -168,17 +169,18 @@ public class PerformanceExpectation
             this.right = right;
         }
 
+        @Override
         boolean booleanVal()
         {
             switch(operator) {
                 case LT:
-                    return left.intVal() < right.intVal();
+                    return left.doubleVal() < right.doubleVal();
                 case LE:
-                    return left.intVal() <= right.intVal();
+                    return left.doubleVal() <= right.doubleVal();
                 case GT:
-                    return left.intVal() > right.intVal();
+                    return left.doubleVal() > right.doubleVal();
                 case GE:
-                    return left.intVal() >= right.intVal();
+                    return left.doubleVal() >= right.doubleVal();
                 case LOR:
                     return left.booleanVal() || right.booleanVal();
                 case LAND:
@@ -187,12 +189,27 @@ public class PerformanceExpectation
                     return super.booleanVal();
             }
         }
+
+        @Override
+        double doubleVal() {
+            switch(operator) {
+                case PLUS:
+                    return left.doubleVal() + right.doubleVal();
+                case MINUS:
+                    return left.doubleVal() - right.doubleVal();
+                case MUL:
+                    return left.doubleVal() * right.doubleVal();
+                case DIV:
+                    return left.doubleVal() / right.doubleVal();
+                default:
+                    return super.doubleVal();
+            }
+        }
     }
 
     static class MethodMatch extends Op {
         String classPattern;
         String mtdPattern;
-
         int count;
 
         MethodMatch(String classPattern, String mtdPattern) {
@@ -201,15 +218,44 @@ public class PerformanceExpectation
         }
 
         @Override
-        int intVal() {
+        double doubleVal() {
             return count;
         }
 
-        void match(String className, String mtdName)
+        void match(Class clazz, String mtdName)
         {
-            if(classPattern == null && mtdName.equals(mtdPattern)) {
-                ++count;
+            if(matches(clazz)) {
+                if(mtdName.equals(mtdPattern)) {
+                    ++count;
+                }
             }
+        }
+
+        @SuppressWarnings({"ConstantConditions"})
+        private boolean matches(Class clazz) {
+            if(classPattern == null) {
+                return true;
+            }
+
+            if(clazz == null) {
+                return false;
+            }
+
+            if(clazz.getSimpleName().equals(classPattern)) {
+                return true;
+            }
+
+            boolean result = false;
+            result |= matches(clazz.getSuperclass());
+
+            if (!result) {
+                for (Class iface : clazz.getInterfaces()) {
+                    result |= matches(iface);
+                    if(result) break; //short circuit
+                }
+            }
+
+            return result;
         }
 
         @Override
@@ -226,7 +272,7 @@ public class PerformanceExpectation
         }
 
         @Override
-        int intVal() {
+        double doubleVal() {
             return value;
         }
     }

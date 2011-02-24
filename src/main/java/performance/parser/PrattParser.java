@@ -23,7 +23,7 @@ public final class PrattParser<T> {
         while (stickiness < grammar.getStickiness(current())) {
             token = consume();
 
-            InfixParser<T> infix = grammar.getInfixParser(token);
+            final InfixParser<T> infix = grammar.getInfixParser(token);
             left = infix.parse(this, left, token);
         }
 

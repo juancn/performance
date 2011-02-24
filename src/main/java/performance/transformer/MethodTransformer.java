@@ -8,14 +8,12 @@ import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
 import performance.annotation.Expect;
 import performance.runtime.Helper;
-
-import java.util.ArrayList;
-import java.util.List;
+import performance.util.MutableArray;
 
 class MethodTransformer extends AdviceAdapter {
     private final String className;
     private final String methodName;
-    private final List<ExpectationInfo> expectations = new ArrayList<ExpectationInfo>();
+    private final MutableArray<ExpectationInfo> expectations = new MutableArray<ExpectationInfo>();
 
     //Helper labels
     private final Label startFinally = new Label();
@@ -70,7 +68,7 @@ class MethodTransformer extends AdviceAdapter {
         for (ExpectationInfo expectation : expectations) {
             expectation.localVar = newLocal(Type.getType(Object.class));
 
-            visitLdcInsn(className.replace('/', '.'));
+            visitLdcInsn(Type.getObjectType(className));
             visitLdcInsn(methodName);
             visitLdcInsn(String.valueOf(expectation.annotation.getValue("value")));
 
@@ -78,13 +76,13 @@ class MethodTransformer extends AdviceAdapter {
             storeLocal(expectation.localVar);
         }
 
-        visitLdcInsn(className.replace('/', '.'));
+        visitLdcInsn(Type.getObjectType(className));
         visitLdcInsn(methodName);
         invokeStatic(HELPER, METHOD_ENTER);
     }
 
     private void onFinally(int opcode) {
-        visitLdcInsn(className.replace('/', '.'));
+        visitLdcInsn(Type.getObjectType(className));
         visitLdcInsn(methodName);
 
         if (opcode == ATHROW) {
@@ -111,10 +109,10 @@ class MethodTransformer extends AdviceAdapter {
     private static final String EXPECT_DESCRIPTOR = Type.getDescriptor(Expect.class);
 
     private static final Type HELPER = Type.getType(Helper.class);
-    private static final Method BEGIN_EXPECTATION = new Method("beginExpectation", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+    private static final Method BEGIN_EXPECTATION = new Method("beginExpectation", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
     private static final Method END_EXPECTATION = new Method("endExpectation", "(Ljava/lang/Object;)V");
-    private static final Method METHOD_ENTER = new Method("methodEnter", "(Ljava/lang/String;Ljava/lang/String;)V");
-    private static final Method METHOD_NORMAL_EXIT = new Method("methodNormalExit","(Ljava/lang/String;Ljava/lang/String;)V");
-    private static final Method METHOD_EXCEPTION_EXIT = new Method("methodExceptionExit","(Ljava/lang/String;Ljava/lang/String;)V");
+    private static final Method METHOD_ENTER = new Method("methodEnter", "(Ljava/lang/Class;Ljava/lang/String;)V");
+    private static final Method METHOD_NORMAL_EXIT = new Method("methodNormalExit","(Ljava/lang/Class;Ljava/lang/String;)V");
+    private static final Method METHOD_EXCEPTION_EXIT = new Method("methodExceptionExit","(Ljava/lang/Class;Ljava/lang/String;)V");
 
 }
