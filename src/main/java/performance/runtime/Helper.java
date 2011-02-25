@@ -1,5 +1,7 @@
 package performance.runtime;
 
+import performance.util.MutableArray;
+
 @SuppressWarnings({"UnusedDeclaration"})
 public final class Helper {
     private static final ThreadLocal<Boolean> enabled = new ThreadLocal<Boolean>() {
@@ -15,6 +17,8 @@ public final class Helper {
             return new ThreadHelper();
         }
     };
+
+    private static final MutableArray<ExpectationData> expectations = new MutableArray<ExpectationData>();
 
     public static void methodEnter(final Class clazz, final String name) {
         if(enabled.get()) {
@@ -49,11 +53,25 @@ public final class Helper {
         }
     }
 
-    public static Object beginExpectation(final Class clazz, final String name, final String expression) {
-        return threadHelper.get().beginExpectation(clazz, name, expression);
+    public static Object beginExpectation(final Class clazz, final Object instance, final Object[] argumentValues, final int handle) {
+        return threadHelper.get().beginExpectation(clazz, getExpectationData(handle), instance, argumentValues);
     }
 
     public static void endExpectation(final Object handle) {
         threadHelper.get().endExpectation(handle);
+    }
+
+    public static ExpectationData newExpectationData(final String methodName, final String expression)
+    {
+        synchronized (expectations) {
+            final ExpectationData expectationData = new ExpectationData(expectations.size(), methodName, expression);
+            expectations.add(expectationData);
+            return expectationData;
+        }
+    }
+
+    private static ExpectationData getExpectationData(int handle)
+    {
+        return expectations.get(handle);
     }
 }

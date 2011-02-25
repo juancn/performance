@@ -4,17 +4,18 @@ import performance.compiler.TokenType;
 import performance.parser.ast.BinaryExpr;
 import performance.parser.ast.ConstantExpr;
 import performance.parser.ast.ExprAdapter;
+import performance.util.MutableArray;
 
 public class ValueVisitor
         extends ExprAdapter<TokenType> {
-    StringBuilder sb = new StringBuilder();
+
+    private final MutableArray<CharSequence> components = new MutableArray<CharSequence>();
 
     @Override
     public void visit(BinaryExpr<TokenType> expr) {
         switch (expr.getToken().getType()) {
             case DOT:
                 expr.getLeft().visit(this);
-                sb.append('.');
                 expr.getRight().visit(this);
                 break;
         }
@@ -22,11 +23,15 @@ public class ValueVisitor
 
     @Override
     public void visit(ConstantExpr<TokenType> expr) {
-        sb.append(expr.getToken().getText());
+        components.add(expr.getToken().getText());
+    }
+
+    public MutableArray<CharSequence> components() {
+        return components;
     }
 
     @Override
     public String toString() {
-        return sb.toString();
+        return components.join(".");
     }
 }

@@ -7,16 +7,19 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
 import performance.annotation.Expect;
+import performance.runtime.ExpectationData;
 import performance.runtime.Helper;
-import performance.util.MutableArray;
 
 class MethodTransformer extends AdviceAdapter {
     private final String className;
     private final String methodName;
-    private final MutableArray<ExpectationInfo> expectations = new MutableArray<ExpectationInfo>();
 
-    //Helper labels
     private final Label startFinally = new Label();
+
+
+    private AnnotationCollector expectationAnnotation;
+    private int localVar;
+    private ExpectationData expectationData;
 
 
     public MethodTransformer(String className, MethodVisitor mv, int acc, String methodName, String desc) {
@@ -26,16 +29,21 @@ class MethodTransformer extends AdviceAdapter {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-        AnnotationVisitor av = super.visitAnnotation(desc, visible);
-        if(desc.equals(EXPECT_DESCRIPTOR)) {
-            final AnnotationCollector annotationCollector = new AnnotationCollector(av, desc, visible);
-            expectations.add(new ExpectationInfo(annotationCollector));
-            av = annotationCollector;
+    public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+        if (expectationData != null) {
+            expectationData.addLocalVar(name, index);
         }
-        return av;
+        super.visitLocalVariable(name, desc, signature, start, end, index);
     }
 
+    @Override
+    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+        if(desc.equals(EXPECT_DESCRIPTOR)) {
+            expectationAnnotation = new AnnotationCollector(super.visitAnnotation(desc, visible), desc, visible);
+            return expectationAnnotation;
+        }
+        return super.visitAnnotation(desc, visible);
+    }
 
     @Override
     public void visitCode() {
@@ -65,20 +73,30 @@ class MethodTransformer extends AdviceAdapter {
     @Override
     protected void onMethodEnter()
     {
-        for (ExpectationInfo expectation : expectations) {
-            expectation.localVar = newLocal(Type.getType(Object.class));
+        if(expectationAnnotation != null) {
+            localVar = newLocal(OBJECT);
+            expectationData = Helper.newExpectationData(methodName, String.valueOf(expectationAnnotation.getValue("value")));
 
             visitLdcInsn(Type.getObjectType(className));
-            visitLdcInsn(methodName);
-            visitLdcInsn(String.valueOf(expectation.annotation.getValue("value")));
+            loadThisOrNull();
+            loadArgArray();
+            visitLdcInsn(expectationData.handle());
 
             invokeStatic(HELPER, BEGIN_EXPECTATION);
-            storeLocal(expectation.localVar);
+            storeLocal(localVar);
         }
 
         visitLdcInsn(Type.getObjectType(className));
         visitLdcInsn(methodName);
         invokeStatic(HELPER, METHOD_ENTER);
+    }
+
+    private void loadThisOrNull() {
+        if ((methodAccess & ACC_STATIC) != 0) {
+            visitInsn(ACONST_NULL);
+        } else {
+            loadThis();
+        }
     }
 
     private void onFinally(int opcode) {
@@ -91,25 +109,19 @@ class MethodTransformer extends AdviceAdapter {
             invokeStatic(HELPER, METHOD_NORMAL_EXIT);
         }
 
-        for (ExpectationInfo expectation : expectations) {
-            loadLocal(expectation.localVar);
+        if(expectationAnnotation != null) {
+            loadLocal(localVar);
             invokeStatic(HELPER, END_EXPECTATION);
         }
     }
 
-    private static class ExpectationInfo {
-        final AnnotationCollector annotation;
-        int localVar = -1;
-
-        private ExpectationInfo(AnnotationCollector annotation) {
-            this.annotation = annotation;
-        }
-    }
 
     private static final String EXPECT_DESCRIPTOR = Type.getDescriptor(Expect.class);
 
+    private static final Type OBJECT = Type.getType(Object.class);
     private static final Type HELPER = Type.getType(Helper.class);
-    private static final Method BEGIN_EXPECTATION = new Method("beginExpectation", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+
+    private static final Method BEGIN_EXPECTATION = new Method("beginExpectation", "(Ljava/lang/Class;Ljava/lang/Object;[Ljava/lang/Object;I)Ljava/lang/Object;");
     private static final Method END_EXPECTATION = new Method("endExpectation", "(Ljava/lang/Object;)V");
     private static final Method METHOD_ENTER = new Method("methodEnter", "(Ljava/lang/Class;Ljava/lang/String;)V");
     private static final Method METHOD_NORMAL_EXIT = new Method("methodNormalExit","(Ljava/lang/Class;Ljava/lang/String;)V");

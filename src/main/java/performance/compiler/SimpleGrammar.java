@@ -61,6 +61,8 @@ public final class SimpleGrammar
         literal(DOUBLE_LITERAL);
         literal(STRING);
         literal(ID);
+        literal(THIS);
+        literal(STATIC);
     }
 
 

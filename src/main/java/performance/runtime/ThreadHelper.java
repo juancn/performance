@@ -32,13 +32,17 @@ public final class ThreadHelper
         }
     }
 
-    public Object beginExpectation(final Class clazz, final String name, final String expression) {
+    public Object beginExpectation(final Class ctxClass, final ExpectationData expectationData,
+                                   final Object instance, final Object[] argumentValues) {
         try {
-            final PerformanceExpectation expectation = new PerformanceExpectation(clazz, name, expression);
+            final PerformanceExpectation expectation = new PerformanceExpectation(ctxClass, expectationData, instance, argumentValues);
             listeners.add(expectation);
             return expectation;
         } catch (ParseException e) {
-            System.err.println("Error parsing: " + expression + " on " + clazz + "." + name);
+            synchronized (System.err) {
+                System.err.println("Error parsing: " + expectationData.expression() + " on " + ctxClass + "." + expectationData.methodName());
+                e.printStackTrace();
+            }
             return FAILED;
         }
     }

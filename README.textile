@@ -55,6 +55,14 @@ It should produce output similar to the following:
             at Test.main(Test.java:25)
 </pre>
 
+h2. Expectation Syntax
+
+Expressions of the form ${a.b.c.d} refer to arguments, instance variables or static variables.
+For example: ${static.CONSTANT} refers to a variable named CONSTANT in the current class.
+             ${this.instance} refers to a variable named 'instance' in the current object (only valid for instance methods).
+             ${n} refers to an argument named 'n'
+             ${3} refers to the fourth argument from the left (zero based indexing)
+
 h2. License
 
 Licensed under the Apache License, Version 2.0 (the "License");

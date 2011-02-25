@@ -55,7 +55,7 @@ public class BinaryOpVisitor
                 stack.add(new UnaryOp(expr.getToken().getType(), stack.removeLast()));
                 break;
             case DOLLAR_LCURLY: //${....}
-                final DynamicValue dynamicValue = new DynamicValue(valueOf(expr.getFirst()).toString());
+                final DynamicValue dynamicValue = new DynamicValue(valueOf(expr.getFirst()).components());
                 dynamicValues.add(dynamicValue);
                 stack.add(dynamicValue);
                 break;
@@ -95,5 +95,9 @@ public class BinaryOpVisitor
 
     public List<MethodMatch> getMethodMatches() {
         return methodMatches;
+    }
+
+    public List<DynamicValue> getDynamicValues() {
+        return dynamicValues;
     }
 }
