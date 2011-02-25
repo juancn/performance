@@ -59,7 +59,7 @@ h2. Expectation Syntax
 
 The expression used to declare expectations consists of:
 * logical operators: <code>&&</code>, <code>||</code>
-* relational operators: <code>&lt;</code>, <code>&gt;</code>, <code>&le;</code>, <code>&ge;</code>,
+* relational operators: <code><</code>, <code>></code>, <code><=</code>, <code>>=</code>,
 * arithmetic operators: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>,
 * unary operators: <code>-</code>, <code>!</code>
 * Method matchers
