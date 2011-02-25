@@ -3,7 +3,9 @@ h1. Performance Invariants
 This library implements a Java agent and a couple of annotations to declare performance invariants in Java code.
 The implementation is currently incomplete (and very primitive).
 
-For more details on the ideas behind it see: "http://www.codng.com/2011/02/performance-invariants.html":http://www.codng.com/2011/02/performance-invariants.html
+For more details on the ideas behind it see:
+* "Performance Invariants":http://www.codng.com/2011/02/performance-invariants.html
+* "Some examples":http://www.codng.com/2011/02/performance-invariants-part-ii.html
 
 h2. Compiling
 
