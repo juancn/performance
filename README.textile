@@ -75,7 +75,7 @@ Expressions of the form ${a.b.c.d} refer to arguments, instance variables or sta
 For example: 
 * <code>*${static.CONSTANT}</code> refers to a variable named CONSTANT in the current class.
 * <code>${this.instance}</code> refers to a variable named 'instance' in the current object (only valid for instance methods).
-* <code>${n}</code> refers to an argument named 'n'
+* <code>${n}</code> refers to an argument named 'n' (this only works if the class has debug information)
 * <code>${3}</code> refers to the fourth argument from the left (zero based indexing)
 All dynamic values *MUST* yield a numeric value, otherwise a failure will be reported.
 

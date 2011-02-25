@@ -76,12 +76,6 @@ public final class SimpleGrammar
 
     public static Expr<TokenType> parse(final String text) throws ParseException {
         final Lexer<TokenType> lexer = new JavaLexer(text, 0 , text.length());
-
-
-//        for(Token<TokenType> t = lexer.next(); t.getType() != EOF; t = lexer.next()) {
-//            System.out.println("t = " + t);
-//        }
-
         final PrattParser<TokenType> prattParser = new PrattParser<TokenType>(INSTANCE, lexer);
         final Expr<TokenType> expr = prattParser.parseExpression(0);
         if(prattParser.current().getType() != EOF) {

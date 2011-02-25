@@ -41,9 +41,6 @@ public class PerformanceExpectation
         }
     }
 
-        
-
-
     @Override
     public void methodEnter(Class clazz, String name) {
         for (MethodMatch methodMatch : methodMatches) {

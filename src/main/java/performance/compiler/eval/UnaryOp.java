@@ -3,8 +3,8 @@ package performance.compiler.eval;
 import performance.compiler.TokenType;
 
 public class UnaryOp extends Op {
-    TokenType operator;
-    Op first;
+    private final TokenType operator;
+    private final Op first;
 
     public UnaryOp(TokenType operator, Op first) {
         this.operator = operator;

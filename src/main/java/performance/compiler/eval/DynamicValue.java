@@ -7,7 +7,6 @@ import performance.util.MutableArray;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class DynamicValue extends Op {
     private final MutableArray<CharSequence> expression;

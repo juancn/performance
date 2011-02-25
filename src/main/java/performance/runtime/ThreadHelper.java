@@ -17,7 +17,6 @@ public final class ThreadHelper
         }
     }
 
-
     @Override
     public void methodNormalExit(final Class clazz, final String name) {
         for (PerformanceExpectation listener : listeners) {

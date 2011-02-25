@@ -61,7 +61,6 @@ class AnnotationCollector implements AnnotationVisitor {
         return visible;
     }
 
-
     private static class Value
     {
         final String key;
@@ -72,6 +71,7 @@ class AnnotationCollector implements AnnotationVisitor {
             this.value = value;
         }
     }
+
     private static final F<Value,String> KEY_FROM_VALUE = new F<Value, String>() {
         @Override
         public String apply(Value x) {

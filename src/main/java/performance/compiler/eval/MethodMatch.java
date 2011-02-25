@@ -1,9 +1,9 @@
 package performance.compiler.eval;
 
 public class MethodMatch extends Op {
-    String classPattern;
-    String mtdPattern;
-    int count;
+    private final String classPattern;
+    private final String mtdPattern;
+    private int count;
 
     public MethodMatch(String classPattern, String mtdPattern) {
         this.classPattern = classPattern;

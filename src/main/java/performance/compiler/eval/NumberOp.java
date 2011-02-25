@@ -2,7 +2,7 @@ package performance.compiler.eval;
 
 
 public class NumberOp extends Op {
-    double value;
+    private final double value;
     public NumberOp(double value) {
         this.value = value;
     }

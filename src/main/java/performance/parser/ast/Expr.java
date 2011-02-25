@@ -3,7 +3,7 @@ package performance.parser.ast;
 import performance.parser.Token;
 
 public abstract class Expr<T> {
-    protected Token<T> token;
+    protected final Token<T> token;
 
     public Expr(Token<T> token) {
         this.token = token;

@@ -3,9 +3,9 @@ package performance.compiler.eval;
 import performance.compiler.TokenType;
 
 public class BinOp extends Op {
-    TokenType operator;
-    Op left;
-    Op right;
+    private final TokenType operator;
+    private final Op left;
+    private final Op right;
 
     public BinOp(TokenType operator, Op left, Op right) {
         this.operator = operator;
