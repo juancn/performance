@@ -21,6 +21,8 @@ public final class SimpleGrammar
         infix(GT, 40);
         infix(LE, 40);
         infix(GE, 40);
+        infix(EQ, 40);
+        infix(NEQ, 40);
 
         infix(PLUS, 50);
         infix(MINUS, 50);

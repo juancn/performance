@@ -3,6 +3,7 @@ package performance.compiler.eval;
 import performance.compiler.TokenType;
 
 public class BinOp extends Op {
+    private static final double EQ_TOLERANCE = 0.00001;
     private final TokenType operator;
     private final Op left;
     private final Op right;
@@ -25,6 +26,10 @@ public class BinOp extends Op {
                 return left.doubleVal() > right.doubleVal();
             case GE:
                 return left.doubleVal() >= right.doubleVal();
+            case EQ:
+                return Math.abs(left.doubleVal()-right.doubleVal()) < EQ_TOLERANCE;
+            case NEQ:
+                return Math.abs(left.doubleVal()-right.doubleVal()) >= EQ_TOLERANCE;
             case LOR:
                 return left.booleanVal() || right.booleanVal();
             case LAND:

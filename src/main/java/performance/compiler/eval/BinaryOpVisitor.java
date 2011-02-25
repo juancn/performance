@@ -29,6 +29,8 @@ public class BinaryOpVisitor
             case LE:
             case GT:
             case GE:
+            case EQ:
+            case NEQ:
             case LOR:
             case LAND:
             case PLUS:
