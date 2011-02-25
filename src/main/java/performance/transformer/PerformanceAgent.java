@@ -52,8 +52,7 @@ public class PerformanceAgent
             inst.addTransformer(new PerformanceAgent(), true);
             for (Class aClass : inst.getAllLoadedClasses()) {
                 if(inst.isModifiableClass(aClass) && !aClass.isInterface()
-                        && include(aClass)
-                        && !skip.contains(aClass.getName())) {
+                        && include(aClass)) {
                     inst.retransformClasses(aClass);
                 }
             }
@@ -68,18 +67,17 @@ public class PerformanceAgent
     private static boolean include(Class aClass) {
         final String name = aClass.getName();
         return name.startsWith("java.io.")
-                || name.startsWith("java.util.");
+                || name.startsWith("java.util.")
+                || included.contains(name);
     }
-
-    private static Set<String> skip= new HashSet<String>();
+    private static Set<String> included = new HashSet<String>();
     static {
-        skip.add("java.lang.ThreadLocal$ThreadLocalMap");
-        skip.add("java.lang.ref.Reference");
-        skip.add("java.lang.Boolean");
-        skip.add("java.lang.Class");
-        skip.add("java.security.PermissionCollection");
-        skip.add("java.lang.ArrayStoreException");
+        included.add("java.lang.String");
+        included.add("java.lang.Math");
+        included.add("java.lang.StrictMath");
+        included.add("java.lang.StringBuffer");
+        included.add("java.lang.StringBuilder");
+        included.add("java.lang.System");
+        included.add("java.lang.Runtime");
     }
-
-
 }
