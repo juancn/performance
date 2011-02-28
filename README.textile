@@ -31,7 +31,7 @@ public class Test
     static void bah(){}
 
     @Expect("bah < 10")
-    static void foo(){
+    static void foo() {
         for(int i = 0; i < 100; i++) {
             bah();
         }   
@@ -80,7 +80,37 @@ For example:
 * <code>${this.instance}</code> refers to a variable named 'instance' in the current object (only valid for instance methods).
 * <code>${n}</code> refers to an argument named 'n' (this only works if the class has debug information)
 * <code>${3}</code> refers to the fourth argument from the left (zero based indexing)
+* <code>${list.size}</code> refers to an argument named 'list' with a method named 'size'
 All dynamic values *MUST* yield a numeric value, otherwise a failure will be reported.
+
+Dynamic values are bound on method enter. For example, if you capture the size of list passed as an argument, the size used for evaluation will be the one that was on method enter. If during method execution the size changes, it will not be accounted for.
+
+h4. Member resolution
+
+Members are resolved according to the following order:
+
+Assume that we're attempting to resolve <code>${x.size}</code>
+# it will first look for a field named 'size'
+# it will look for a method named 'size'
+# it will look for a method named 'getSize'
+# it will look for a method named 'hasSize'
+# it will look for a method named 'isSize'
+
+h2. Code structure
+
+The code is layed out in several packages:
+* annotation: Contains the annotations
+* compiler: The expression interpreter (see SimpleGrammar)
+* parser: a generic Pratt parser to build an AST from a simple grammar.
+* runtime: runtime support classes, called from bytecode. (see Helper)
+* transformer: the bytecode transformer (see PerformanceAgent)
+* util: some generic utilities
+
+The library works by instrumenting *all* methods as they are loaded. It inserts calls to <code>performance.runtime.Helper</code> on method enter/exit. It adds additional calls for methods annotated with the <code>@Expect</code>.
+
+Parsing of expressions ocurs when the annotated method is entered. At that point, dynamic values are bound. During method execution, method calls are matched against the method matchersa in the expression.
+
+On method exit (normal or otherwise), the expression is evaluated. If it yields a false value, an AssertionError will be thrown. Note that this might shadow exceptions on the underlying code.
 
 h2. License
 

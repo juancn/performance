@@ -13,14 +13,11 @@ import performance.runtime.Helper;
 class MethodTransformer extends AdviceAdapter {
     private final String className;
     private final String methodName;
-
     private final Label startFinally = new Label();
-
 
     private AnnotationCollector expectationAnnotation;
     private int localVar;
     private ExpectationData expectationData;
-
 
     public MethodTransformer(String className, MethodVisitor mv, int acc, String methodName, String desc) {
         super(mv, acc, methodName, desc);
@@ -68,7 +65,6 @@ class MethodTransformer extends AdviceAdapter {
             onFinally(opcode);
         }
     }
-
 
     @Override
     protected void onMethodEnter()
