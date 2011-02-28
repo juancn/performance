@@ -3,6 +3,12 @@ package performance.util;
 import java.util.Comparator;
 import java.util.Iterator;
 
+/**
+ * Poor programmer's version of ArrayList<T>.
+ * Exists solely to minimize the number of classes loaded by the ClassTransformer.
+ * Provides a couple utility methods for sorting and binary search, so it can replace maps and sets.
+ * @param <T> element type
+ */
 public class MutableArray<T>
     implements Iterable<T>
 {

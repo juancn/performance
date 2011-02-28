@@ -18,6 +18,9 @@ public final class PrattParser<T> {
     public Expr<T> parseExpression(int stickiness) throws ParseException {
         Token<T> token = consume();
         final PrefixParser<T> prefix = grammar.getPrefixParser(token);
+        if(prefix == null) {
+            throw new ParseException("Unexpected token: " + token);
+        }
         Expr<T> left = prefix.parse(this, token);
 
         while (stickiness < grammar.getStickiness(current())) {

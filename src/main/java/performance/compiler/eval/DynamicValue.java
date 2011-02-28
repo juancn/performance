@@ -10,7 +10,8 @@ import java.lang.reflect.Method;
 
 public class DynamicValue extends Op {
     private final MutableArray<CharSequence> expression;
-    private double value = Double.NaN;
+    private Object value;
+    private boolean isBoolean;
 
     public DynamicValue(MutableArray<CharSequence> expression) {
         this.expression = expression;
@@ -18,7 +19,18 @@ public class DynamicValue extends Op {
 
     @Override
     public double doubleVal() {
-        return value;
+        if(isBoolean) {
+            return super.doubleVal();
+        }
+        return ((Number) value).doubleValue();
+    }
+
+    @Override
+    public boolean booleanVal() {
+        if(!isBoolean) {
+            return super.booleanVal();
+        }
+        return ((Boolean)value);
     }
 
     public void resolve(final Class<?> ctxClass, final Object instance, final Object[] argumentValues, final ExpectationData data) throws ParseException {
@@ -58,12 +70,11 @@ public class DynamicValue extends Op {
             v = resolveMember(rootValue, rootValue.getClass(), 1);
         }
 
-        if (v instanceof Number) {
-            final Number number = (Number) v;
-            value = number.doubleValue();
-        } else {
+        isBoolean = v instanceof Boolean;
+        if(!isBoolean && !(v instanceof Number)){
             throw error("Expression yields a non-numeric value", expression.size());
         }
+        value = v;
     }
 
     private ParseException error(String message) {
@@ -138,7 +149,7 @@ public class DynamicValue extends Op {
     private Method findMethod(Class<?> rootValueClass, String member) {
         Method mtd;
         try {
-            mtd = rootValueClass.getMethod(member);
+            mtd = rootValueClass.getDeclaredMethod(member);
         } catch (NoSuchMethodException e) {
             mtd = null;
         }

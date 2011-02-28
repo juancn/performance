@@ -21,7 +21,8 @@ public class PerformanceExpectation
     private List<MethodMatch> methodMatches;
     private List<DynamicValue> dynamicValues;
 
-    public PerformanceExpectation(final Class ctxClass, final ExpectationData expectationData,
+    public PerformanceExpectation(final Class ctxClass,
+                                  final ExpectationData expectationData,
                                   final Object instance,
                                   final Object[] argumentValues)
             throws ParseException
@@ -29,14 +30,13 @@ public class PerformanceExpectation
         this.ctxClass = ctxClass;
         this.expectationData = expectationData;
 
-        //TODO: Take all this out of here!
         final Expr<TokenType> expr = SimpleGrammar.parse(expectationData.expression());
         final BinaryOpVisitor visitor = new BinaryOpVisitor();
         expr.visit(visitor);
         validation = visitor.getOpTree();
         methodMatches = visitor.getMethodMatches();
         dynamicValues = visitor.getDynamicValues();
-        for (DynamicValue dynamicValue : dynamicValues) {
+        for (final DynamicValue dynamicValue : dynamicValues) {
             dynamicValue.resolve(ctxClass, instance, argumentValues, expectationData);
         }
     }
@@ -69,6 +69,4 @@ public class PerformanceExpectation
             throw new AssertionError(sb.toString());
         }
     }
-
-
 }
