@@ -21,6 +21,11 @@ public class GrammarTest {
     }
 
     @Test
+    public void floatTest() throws ParseException {
+        check("1.5f", "1.5f");
+    }
+    @Test
+
     public void doubleTest() throws ParseException {
         check("1.5d", "1.5d");
     }
@@ -59,6 +64,12 @@ public class GrammarTest {
     @Test
     public void dynamicTest() throws ParseException {
         check("{ * { ${ { . { . a b } c } } 2 }", "${a.b.c}*2");
+    }
+
+    @Test
+    public void unaryTest() throws ParseException {
+        check("{ - 1 { - 3 } }", "1-(-3)");
+        check("{ || { ! a } b }", "!a||b");
     }
 
     private void check(String expected, String expression) throws ParseException {
