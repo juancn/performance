@@ -47,7 +47,7 @@ public class MutableArray<T>
     public T remove(int index) {
         if(index < 0 || index >= size) throw new IndexOutOfBoundsException("index: " + index);
         final T old = cast(elements[index]);
-        System.arraycopy(elements, index+1, elements, index, size-index);
+        System.arraycopy(elements, index+1, elements, index, size-index-1);
         --size;
         return old;
     }
