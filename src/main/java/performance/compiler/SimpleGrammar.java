@@ -44,15 +44,6 @@ public final class SimpleGrammar
         literal(STATIC);
     }
 
-
-    public static final SimpleGrammar INSTANCE = new SimpleGrammar();
-
-    public static void main(String[] args) throws ParseException {
-        String text = "Test.bah < ${list.size}";
-        Expr expr = parse(text);
-        System.out.println("expr = " + expr);
-    }
-
     public static Expr<TokenType> parse(final String text) throws ParseException {
         final Lexer<TokenType> lexer = new JavaLexer(text, 0 , text.length());
         final PrattParser<TokenType> prattParser = new PrattParser<TokenType>(INSTANCE, lexer);
@@ -63,4 +54,5 @@ public final class SimpleGrammar
         return expr;
     }
 
+    private static final SimpleGrammar INSTANCE = new SimpleGrammar();
 }

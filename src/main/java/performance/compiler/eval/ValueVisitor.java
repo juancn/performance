@@ -6,9 +6,8 @@ import performance.parser.ast.ConstantExpr;
 import performance.parser.ast.ExprAdapter;
 import performance.util.MutableArray;
 
-public class ValueVisitor
+class ValueVisitor
         extends ExprAdapter<TokenType> {
-
     private final MutableArray<CharSequence> components = new MutableArray<CharSequence>();
 
     @Override
@@ -26,7 +25,7 @@ public class ValueVisitor
         components.add(expr.getToken().getText());
     }
 
-    public MutableArray<CharSequence> components() {
+    MutableArray<CharSequence> components() {
         return components;
     }
 

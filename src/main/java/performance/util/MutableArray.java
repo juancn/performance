@@ -63,7 +63,7 @@ public class MutableArray<T>
     }
 
     public int binarySearch(T key, Comparator<? super T> comparator) {
-        return binarySearch(key, new F.Identity<T>(), comparator);
+        return binarySearch(key, F.Identity.<T>instance(), comparator);
     }
 
     public <S> int binarySearch(S key, F<T,S> mapping, Comparator<? super S> comparator) {
@@ -86,7 +86,7 @@ public class MutableArray<T>
     }
 
     public void sort(Comparator<? super T> comparator) {
-        sort(new F.Identity<T>(), comparator);
+        sort(F.Identity.<T>instance(), comparator);
     }
 
     public <S> void sort(F<T,S> mapping, Comparator<? super S> comparator) {

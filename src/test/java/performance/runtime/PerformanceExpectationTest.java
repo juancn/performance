@@ -23,6 +23,15 @@ public class PerformanceExpectationTest {
     }
 
     @Test
+    public void classMatchTest() throws ParseException {
+        final PerformanceExpectation expectation = expectation("PerformanceExpectationTest.foo == 5", null);
+        for (int i = 0; i < 5; i++) {
+            expectation.methodEnter(PerformanceExpectationTest.class, "foo");
+        }
+        expectation.validate();
+    }
+
+    @Test
     public void unnamedStaticArgumentTest() throws ParseException {
         expectation("${0} == 42", null, 42).validate();
     }
@@ -81,6 +90,27 @@ public class PerformanceExpectationTest {
     @Test
     public void instanceGetterTest() throws ParseException {
         expectation("${this.instanceMethod} == " + getInstanceMethod(), this).validate();
+    }
+
+    @Test
+    public void arithmeticTest() throws ParseException {
+        expectation("1+1 == 2", this).validate();
+        expectation("1-1 == 0", this).validate();
+        expectation("1/2 == 0.5", this).validate();
+        expectation("2*2 == 4", this).validate();
+        expectation("-1*2 == -2", this).validate();
+    }
+
+    @Test
+    public void relationalTest() throws ParseException {
+        expectation("1 <  2", this).validate();
+        expectation("1 <= 2", this).validate();
+        expectation("2 <= 2", this).validate();
+        expectation("2 >  1", this).validate();
+        expectation("2 >= 1", this).validate();
+        expectation("2 >= 2", this).validate();
+        expectation("!(1 > 2)", this).validate();
+        expectation("!(1 > 2)", this).validate();
     }
 
     public double nakedPublicMethod() {

@@ -262,6 +262,8 @@ public class JavaLexer
             if(c == 'x' || c == 'X') {
                 radix = 16;
                 c = read();
+            } else if(c == '.') {
+                radix = 10;
             } else {
                 radix = 8;
             }

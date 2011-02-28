@@ -2,6 +2,11 @@ package performance.runtime;
 
 import performance.util.MutableArray;
 
+/**
+ * This class contains methods that are called from instrumented bytecode
+ * or by the ClassTransformer. Methods are thread-safe, thread specific operations
+ * are delegated to a ThreadHelper.
+ */
 @SuppressWarnings({"UnusedDeclaration"})
 public final class Helper {
     private static final ThreadLocal<Boolean> enabled = new ThreadLocal<Boolean>() {
@@ -72,6 +77,10 @@ public final class Helper {
 
     private static ExpectationData getExpectationData(int handle)
     {
-        return expectations.get(handle);
+        //Should change this to a more efficient data structure
+        //The array is read a lot more than it is written to.
+        synchronized (expectations) {
+            return expectations.get(handle);
+        }
     }
 }

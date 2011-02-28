@@ -4,6 +4,12 @@ import performance.util.ComparableComparator;
 import performance.util.F;
 import performance.util.MutableArray;
 
+/**
+ * To keep the instrumentation in a single pass, method metadata is stored in an
+ * instance of this class. This class contains the expression source and a summary
+ * of the local variable table (names and indexes). This information is used
+ * to resolve symbolic references to argument names.
+ */
 public class ExpectationData {
     private final int handle;
     private final String methodName;
