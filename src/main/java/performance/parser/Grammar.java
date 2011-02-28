@@ -41,4 +41,12 @@ public class Grammar<T> {
     protected void prefix(T ttype, PrefixParser<T> value) {
         prefixParsers.put(ttype, value);
     }
+
+    protected void delimited(T left, T right, int subExpStickiness) {
+        prefixParsers.put(left, new DelimitedParser<T>(right, subExpStickiness, true));
+    }
+
+    protected void clarifying(T left, T right, int subExpStickiness) {
+        prefixParsers.put(left, new DelimitedParser<T>(right, subExpStickiness, false));
+    }
 }

@@ -4,10 +4,7 @@ import performance.parser.Grammar;
 import performance.parser.Lexer;
 import performance.parser.ParseException;
 import performance.parser.PrattParser;
-import performance.parser.PrefixParser;
-import performance.parser.Token;
 import performance.parser.ast.Expr;
-import performance.parser.ast.UnaryExpr;
 
 import static performance.compiler.TokenType.*;
 
@@ -35,33 +32,13 @@ public final class SimpleGrammar
 
         infix(DOT, 80);
 
-        prefix(LPAREN, new PrefixParser<TokenType>(){
-            @Override
-            public Expr<TokenType> parse(PrattParser<TokenType> prattParser, Token<TokenType> tokenTypeToken) throws ParseException {
-                Expr<TokenType> result = prattParser.parseExpression(0);
-                if(prattParser.consume().getType() != RPAREN) {
-                    throw new ParseException("Unmatched left parenthesis");
-                }
-                return result;
-            }
-        });
-
-        prefix(DOLLAR_LCURLY, new PrefixParser<TokenType>(){
-            @Override
-            public Expr<TokenType> parse(PrattParser<TokenType> prattParser, Token<TokenType> token) throws ParseException {
-                Expr<TokenType> result = new UnaryExpr<TokenType>(token, prattParser.parseExpression(70));
-                if(prattParser.consume().getType() != RCURLY) {
-                    throw new ParseException("Sub-expression not closed missing '}'");
-                }
-                return result;
-            }
-        });
+        clarifying(LPAREN, RPAREN, 0);
+        delimited(DOLLAR_LCURLY, RCURLY, 70);
 
         literal(INT_LITERAL);
         literal(LONG_LITERAL);
         literal(FLOAT_LITERAL);
         literal(DOUBLE_LITERAL);
-        literal(STRING);
         literal(ID);
         literal(THIS);
         literal(STATIC);
