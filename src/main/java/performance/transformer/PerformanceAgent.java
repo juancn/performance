@@ -4,6 +4,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -24,7 +25,10 @@ public class PerformanceAgent
                             final byte[] bytecode) throws IllegalClassFormatException
     {
         if(className.startsWith("performance/runtime")
-                || className.equals("java/lang/ThreadLocal")) {
+                || className.startsWith("sun/reflect/")
+                || className.equals("java/lang/ThreadLocal")
+                /* Check the class version. Don't instrument older classes. */
+                || (bytecode[6] == 0 && bytecode[7] < 49)) {
             return bytecode;
         }
 

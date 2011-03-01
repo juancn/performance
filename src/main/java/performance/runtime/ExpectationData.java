@@ -17,7 +17,7 @@ public class ExpectationData {
     private final MutableArray<LocalVar> localVars;
     private int lastSize;
 
-    ExpectationData(int handle, String methodName, String expression) {
+    public ExpectationData(int handle, String methodName, String expression) {
         this.handle = handle;
         this.methodName = methodName;
         this.expression = expression;
