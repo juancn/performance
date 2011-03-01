@@ -41,33 +41,41 @@ public class DynamicValue extends Op {
 
         final boolean isStaticVar = "static".equals(rootVar);
 
+        //Normally we start method resolution after the first token
+        int methodResolutionStart = 1;
+
         if(isStaticVar) {
             rootValue = null;
         } else if("this".equals(rootVar)){
             rootValue = instance;
         } else if(index >= 0) {
-            //If the method is an instance method, local variables ar shifted by one
+            //If the method is an instance method, local variables are shifted by one
             int off = instance == null? 0 : 1;
             rootValue = argumentValues[index - off];
         }  else {
+            Object tmp;
             try {
-                rootValue = argumentValues[Integer.parseInt(rootVar)];
+                tmp = argumentValues[Integer.parseInt(rootVar)];
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw error("Index out of range: " + rootVar);
             } catch (NumberFormatException e) {
-                throw error("Cannot resolve root value", 1);
+                //Fall through, assume 'this' as the current root value,
+                // start searching from the first token
+                tmp = instance;
+                methodResolutionStart = 0;
             }
+            rootValue = tmp;
         }
 
 
         final Object v;
         if(isStaticVar) {
-            v = resolveMember(null, ctxClass, 1);
+            v = resolveMember(null, ctxClass, methodResolutionStart);
         } else {
             if(rootValue == null) {
                 throw error("Cannot resolve root value", 0);
             }
-            v = resolveMember(rootValue, rootValue.getClass(), 1);
+            v = resolveMember(rootValue, rootValue.getClass(), methodResolutionStart);
         }
 
         isBoolean = v instanceof Boolean;

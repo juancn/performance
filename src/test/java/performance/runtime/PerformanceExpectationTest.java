@@ -51,9 +51,50 @@ public class PerformanceExpectationTest {
         expectation("${first} == 42", this, 42).validate();
     }
 
+    @Test(expectedExceptions = {ParseException.class})
+    public void nonexistentArgumentTest() throws ParseException {
+        expectation("${bogus} == 42", null, 42).validate();
+    }
+
     @Test
     public void staticVarStaticTest() throws ParseException {
         expectation("${static.STATIC_VAR} == " + STATIC_VAR, null).validate();
+    }
+
+    @Test
+    public void unqualifiedStaticVarInstanceTest() throws ParseException {
+        expectation("${STATIC_VAR} == " + STATIC_VAR, this).validate();
+    }
+
+    @Test
+    public void unqualifiedInstanceVarTest() throws ParseException {
+        expectation("${instanceVar} == " + instanceVar, this).validate();
+    }
+
+
+    @Test
+    public void unqualifiedNakedPublicInstanceMethodTest() throws ParseException {
+        expectation("${nakedPublicMethod} == " + nakedPublicMethod(), this).validate();
+    }
+
+    @Test
+    public void unqualifiedNakedPrivateInstanceMethodTest() throws ParseException {
+        expectation("${nakedPrivateMethod} == " + nakedPrivateMethod(), this).validate();
+    }
+
+    @Test
+    public void unqualifiedBooleanHasInstanceMethodTest() throws ParseException {
+        expectation("${flair} || 1!=1", this).validate();
+    }
+
+    @Test
+    public void unqualifiedBooleanIsInstanceMethodTest() throws ParseException {
+        expectation("${attitude} || 1!=1", this).validate();
+    }
+
+    @Test
+    public void unqualifiedInstanceGetterTest() throws ParseException {
+        expectation("${instanceMethod} == " + getInstanceMethod(), this).validate();
     }
 
     @Test
@@ -90,6 +131,16 @@ public class PerformanceExpectationTest {
     @Test
     public void instanceGetterTest() throws ParseException {
         expectation("${this.instanceMethod} == " + getInstanceMethod(), this).validate();
+    }
+
+    @Test
+    public void instanceShadowingTest() throws ParseException {
+        expectation("${first} == 321", this, 321).validate();
+    }
+
+    @Test
+    public void qualifyOverShadowTest() throws ParseException {
+        expectation("${this.first} == " + first(), this, 321).validate();
     }
 
     @Test
@@ -132,6 +183,10 @@ public class PerformanceExpectationTest {
 
     public double getInstanceMethod() {
         return 789;
+    }
+
+    private int first() {
+        return 123;
     }
 
     private static final int STATIC_VAR = 1234;
