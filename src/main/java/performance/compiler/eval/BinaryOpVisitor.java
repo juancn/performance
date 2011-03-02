@@ -85,8 +85,8 @@ public class BinaryOpVisitor
         return mtdPattern;
     }
 
-    private void methodMatch(String classPattern1, String mtdPattern1) {
-        MethodMatch methodMatch = new MethodMatch(classPattern1, mtdPattern1);
+    private void methodMatch(String classPattern, String mtdPattern) {
+        final MethodMatch methodMatch = new MethodMatch(classPattern, mtdPattern);
         stack.add(methodMatch);
         methodMatches.add(methodMatch);
     }

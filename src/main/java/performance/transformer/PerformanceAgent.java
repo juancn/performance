@@ -4,7 +4,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -51,6 +50,8 @@ public class PerformanceAgent
 
     public static void premain(String agentArgs, Instrumentation inst)
             throws ClassNotFoundException, UnmodifiableClassException, IOException {
+        System.out.println("*** Performance Agent Started ***");
+        long start = System.currentTimeMillis();
         if(inst.isRetransformClassesSupported()) {
             inst.addTransformer(new PerformanceAgent(), true);
             for (Class aClass : inst.getAllLoadedClasses()) {
@@ -64,7 +65,8 @@ public class PerformanceAgent
             System.err.println("*** WARNING: JVM does not support retransforming. Classes already loaded will not be instrumented.");
         }
 
-
+        long end = System.currentTimeMillis();
+        System.out.println("\t startup took: " + (end-start) + "ms.");
     }
 
     private static boolean include(Class aClass) {

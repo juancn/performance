@@ -112,6 +112,25 @@ Parsing of expressions ocurs when the annotated method is entered. At that point
 
 On method exit (normal or otherwise), the expression is evaluated. If it yields a false value, an AssertionError will be thrown. Note that this might shadow exceptions on the underlying code.
 
+h2. Integrating with Maven
+
+<pre>
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-javaagent:${basedir}/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar</argLine>
+                    <argLine>-Xbootclasspath/p:${basedir}/target/performance-1.0-SNAPSHOT-jar-with-dependencies.jar</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+</pre>
+
 h2. License
 
 Licensed under the Apache License, Version 2.0 (the "License");

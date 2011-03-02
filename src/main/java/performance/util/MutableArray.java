@@ -2,6 +2,7 @@ package performance.util;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Poor programmer's version of ArrayList<T>.
@@ -180,7 +181,11 @@ public class MutableArray<T>
 
             @Override
             public T next() {
-                return get(++cursor);
+                try {
+                    return get(++cursor);
+                } catch (IndexOutOfBoundsException e) {
+                    throw (NoSuchElementException) new NoSuchElementException().initCause(e);
+                }
             }
 
             @Override

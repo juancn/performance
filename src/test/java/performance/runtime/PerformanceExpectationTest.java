@@ -204,6 +204,6 @@ public class PerformanceExpectationTest {
         data.addLocalVar("third", argNo++);
         data.addLocalVar("fourth", argNo++);
         data.addLocalVar("fifth", argNo);
-        return new PerformanceExpectation(PerformanceExpectationTest.class, data, instance, arguments);
+        return new PerformanceExpectation(null, PerformanceExpectationTest.class, data, instance, arguments);
     }
 }

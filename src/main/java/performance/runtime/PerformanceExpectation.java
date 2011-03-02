@@ -14,6 +14,7 @@ import java.util.List;
 public class PerformanceExpectation
     implements MethodListener
 {
+    private final PerformanceExpectation next;
     private final Class ctxClass;
     private final ExpectationData expectationData;
 
@@ -21,12 +22,14 @@ public class PerformanceExpectation
     private List<MethodMatch> methodMatches;
     private List<DynamicValue> dynamicValues;
 
-    public PerformanceExpectation(final Class ctxClass,
+    public PerformanceExpectation(final PerformanceExpectation next,
+                                  final Class ctxClass,
                                   final ExpectationData expectationData,
                                   final Object instance,
                                   final Object[] argumentValues)
             throws ParseException
     {
+        this.next = next;
         this.ctxClass = ctxClass;
         this.expectationData = expectationData;
 
@@ -69,4 +72,9 @@ public class PerformanceExpectation
             throw new AssertionError(sb.toString());
         }
     }
+
+    public PerformanceExpectation next() {
+        return next;
+    }
+
 }
