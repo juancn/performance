@@ -25,7 +25,7 @@ public class PerformanceAgent
     {
         if(className.startsWith("performance/runtime")
                 || className.startsWith("sun/reflect/")
-                || className.equals("java/lang/ThreadLocal")
+                || className.startsWith("java/lang/ThreadLocal")
                 /* Check the class version. Don't instrument older classes. */
                 || (bytecode[6] == 0 && bytecode[7] < 49)) {
             return bytecode;
