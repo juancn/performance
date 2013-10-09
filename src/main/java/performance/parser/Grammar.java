@@ -11,28 +11,27 @@ public class Grammar<T> {
         return prefixParsers.get(token.getType());
     }
 
-    int getStickiness(Token<T> token) {
+    int getPrecedence(Token<T> token) {
         InfixParser infixParser = getInfixParser(token);
-        return infixParser == null?Integer.MIN_VALUE:infixParser.getStickiness();
+        return infixParser == null ? Integer.MIN_VALUE : infixParser.getPrecedence();
     }
 
     InfixParser<T> getInfixParser(Token<T> token) {
         return infixParsers.get(token.getType());
     }
 
-    protected void infix(T ttype, int stickiness)
-    {
-        infix(ttype, new InfixParser<T>(stickiness));
+    protected void infix(T ttype, int precedence) {
+        infix(ttype, new InfixParser<T>(precedence));
     }
 
     protected void infix(T ttype, InfixParser<T> value) {
         infixParsers.put(ttype, value);
     }
 
-    protected void unary(T ttype, int stickiness)
-    {
+    protected void unary(T ttype, int stickiness) {
         prefixParsers.put(ttype, new UnaryParser<T>(stickiness));
     }
+
     protected void literal(T ttype)
     {
         prefix(ttype, new LiteralParser<T>());

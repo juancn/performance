@@ -10,6 +10,7 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 

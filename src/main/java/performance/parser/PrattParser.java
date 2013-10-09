@@ -2,6 +2,7 @@ package performance.parser;
 
 import performance.parser.ast.Expr;
 
+/** A Pratt parser, that given a {@link Grammar} and a {@link Lexer} parses an expression */
 public final class PrattParser<T> {
     private final Grammar<T> grammar;
     private final Lexer<T> lexer;
@@ -15,7 +16,7 @@ public final class PrattParser<T> {
         current = lexer.next();
     }
 
-    public Expr<T> parseExpression(int stickiness) throws ParseException {
+    public Expr<T> parseExpression(int precedence) throws ParseException {
         Token<T> token = consume();
         final PrefixParser<T> prefix = grammar.getPrefixParser(token);
         if(prefix == null) {
@@ -23,7 +24,7 @@ public final class PrattParser<T> {
         }
         Expr<T> left = prefix.parse(this, token);
 
-        while (stickiness < grammar.getStickiness(current())) {
+        while (precedence < grammar.getPrecedence(current())) {
             token = consume();
 
             final InfixParser<T> infix = grammar.getInfixParser(token);
